@@ -30,10 +30,12 @@ class TestBasic < Test::Unit::TestCase
   end
 
   def test_already_computed
-    CompTree.build { |driver|
-      driver.define(:a) { 33 }
-      (1..3).each { |n|
-        assert_equal(33, driver.compute(:a, n))
+    [nil, false, true, 33].each { |result|
+      CompTree.build { |driver|
+        driver.define(:a) { result }
+        (1..3).each { |n|
+          assert_equal(result, driver.compute(:a, n))
+        }
       }
     }
   end
@@ -150,6 +152,37 @@ class TestBasic < Test::Unit::TestCase
       driver.define("hello") { }
       assert_raise(CompTree::RedefinitionError) {
         driver.define("hello") { }
+      }
+    }
+  end
+  
+  def test_result_variety
+    [true, false, nil, Object.new, 33].each { |result|
+      (1..20).each { |threads|
+        CompTree.build { |driver|
+          driver.define(:area, :width, :height, :offset) {
+            |width, height, offset|
+            result
+          }
+          
+          driver.define(:width, :border) { |border|
+            result
+          }
+          
+          driver.define(:height, :border) { |border|
+            result
+          }
+          
+          driver.define(:border) {
+            result
+          }
+          
+          driver.define(:offset) {
+            result
+          }
+          
+          assert_equal(result, driver.compute(:area, threads))
+        }
       }
     }
   end

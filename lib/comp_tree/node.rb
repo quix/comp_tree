@@ -12,6 +12,7 @@ module CompTree
     attr_accessor :children             #:nodoc:
     attr_accessor :function             #:nodoc:
     attr_accessor :result               #:nodoc:
+    attr_accessor :computed             #:nodoc:
     attr_accessor :shared_lock          #:nodoc:
 
     #
@@ -22,6 +23,7 @@ module CompTree
       @mutex = Mutex.new
       @children = []
       @parents = []
+      @function = nil
       reset_self
     end
 
@@ -32,6 +34,7 @@ module CompTree
       @shared_lock = 0
       @children_results = nil
       @result = nil
+      @computed = nil
     end
 
     #
@@ -80,14 +83,18 @@ module CompTree
     # If all children have been computed, return their results;
     # otherwise return nil.
     #
+    # Do not assign to @children_results since own lock is not
+    # necessarily aquired.
+    #
     def find_children_results #:nodoc:
-      if @children_results
-        @children_results
-      else
+      @children_results or (
         @children.map { |child|
-          child.result or return nil
+          unless child.computed
+            return nil
+          end
+          child.result
         }
-      end
+      )
     end
 
     def children_results=(value) #:nodoc:
@@ -98,7 +105,7 @@ module CompTree
     #  debug {
     #    # --- own mutex
     #    trace "Computing #{@name}"
-    #    raise AssertionFailedError if @result
+    #    raise AssertionFailedError if @computed
     #    raise AssertionFailedError unless @mutex.locked?
     #    raise AssertionFailedError unless @children_results
     #  }
@@ -109,11 +116,17 @@ module CompTree
     # already acquired.
     #
     def compute #:nodoc:
-      unless defined?(@function) and @function
-        raise NoFunctionError,
+      begin
+        unless @function
+          raise NoFunctionError,
           "No function was defined for node '#{@name.inspect}'"
+        end
+        @result = @function.call(*@children_results)
+        @computed = true
+      rescue Exception => e
+        @computed = e
       end
-      @function.call(*@children_results)
+      @result
     end
 
     def try_lock #:nodoc:
