@@ -8,47 +8,40 @@
   CompTree.build do |driver|
 
     # Define a function named 'area' taking these three arguments.
-    driver.define_area(:width, :height, :offset) { |width, height, offset|
-      width*height - offset
+    driver.define_area(:width, :height) { |width, height|
+      width*height
     }
     
     # Define a function 'width' which takes a 'border' argument.
     driver.define_width(:border) { |border|
-      2 + border
+      7 + border
     }
     
     # Ditto for 'height'.
     driver.define_height(:border) { |border|
-      3 + border
+      5 + border
     }
     
     # Define a constant function 'border'.
     driver.define_border {
-      5
-    }
-    
-    # Ditto for 'offset'.
-    driver.define_offset {
-      7
+      2
     }
     
     # Compute the area using four parallel threads.
-    area = driver.compute(:area, 4)
+    puts driver.compute(:area, 4)
+    # => 63
 
     # We've done this computation.
-    if area == (2 + 5)*(3 + 5) - 7
-      puts "It worked!"
-    else
-      puts "Send bug report to ..."
-    end
+    puts((7 + 2)*(5 + 2))
+    # => 63
   end
 
 === Alternative Forms for Function Definitions
 
 This form evals a lambda, saving you the repeat parameter list:
 
-  driver.define_area :width, :height, :offset, %{
-    width*height - offset
+  driver.define_area :width, :height %{
+    width*height
   }
   
   driver.define_width :border, %{
@@ -61,8 +54,8 @@ just once, during the time of definition.
 Finally there is the raw form which uses no +eval+ or
 +method_missing+ tricks:
 
-  driver.define(:area, :width, :height, :offset) { |width, height, offset|
-    width*height - offset
+  driver.define(:area, :width, :height) { |width, height|
+    width*height
   }
         
   driver.define(:width, :border) { |border|
@@ -96,9 +89,9 @@ to affect a state (to produce a <em>side effect</em>).
   #
   # BAD example: affecting state
   #
-  driver.define_area(:width, :height, :offset) { |width, height, offset|
+  driver.define_area(:width, :height) { |width, height|
     ACCUMULATOR.add "more data"
-    width*height - offset
+    width*height
   }
 
 Given a tree where nodes are modifying _ACCUMULATOR_, the end state of
