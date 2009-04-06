@@ -43,7 +43,8 @@ module CompTree
                 #
                 # Find a node.  The node we obtain, if any, will be locked.
                 #
-                if node = find_node(root)
+                node = find_node(root)
+                if node
                   #trace "Thread #{thread_index} found node #{node.name}"
                   node
                 else
@@ -155,9 +156,7 @@ module CompTree
         #
         #trace "Checking #{node.name}'s children"
         node.each_child { |child|
-          if next_node = find_node(child)
-            return next_node
-          end
+          next_node = find_node(child) and return next_node
         }
         nil
       end
