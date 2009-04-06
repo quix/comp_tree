@@ -40,7 +40,7 @@ module CompTree
     include TestCommon
 
     def test_1_syntax
-      CompTree::Driver.new { |driver|
+      CompTree.build { |driver|
         driver.define(:area, :width, :height, :offset) { |width, height, offset|
           width*height - offset
         }
@@ -66,7 +66,7 @@ module CompTree
     end
 
     def test_2_syntax
-      CompTree::Driver.new { |driver|
+      CompTree.build { |driver|
         driver.define_area(:width, :height, :offset) { |width, height, offset|
           width*height - offset
         }
@@ -92,7 +92,7 @@ module CompTree
     end
 
     def test_3_syntax
-      CompTree::Driver.new { |driver|
+      CompTree.build { |driver|
         driver.define_area :width, :height, :offset, %{
           width*height - offset
         }
@@ -119,7 +119,7 @@ module CompTree
 
     def test_thread_flood
       (1..200).each { |num_threads|
-        CompTree::Driver.new { |driver|
+        CompTree.build { |driver|
           drain = lambda { |*args|
             1.times { }
           }
@@ -133,7 +133,7 @@ module CompTree
     def test_sequential
       (1..50).each { |num_threads|
         [1, 2, 3, 20, 50].each { |num_nodes|
-          CompTree::Driver.new { |driver|
+          CompTree.build { |driver|
             driver.define(:root) { true }
             (1..num_nodes).each { |n|
               if n == 0
@@ -149,7 +149,7 @@ module CompTree
     end
 
     def test_malformed
-      CompTree::Driver.new { |driver|
+      CompTree.build { |driver|
         assert_raise(CompTree::Error::ArgumentError) {
           driver.define {
           }
@@ -175,7 +175,7 @@ module CompTree
 
     def test_exception_in_compute
       test_error = Class.new(RuntimeError)
-      CompTree::Driver.new { |driver|
+      CompTree.build { |driver|
         driver.define_area(:width, :height, :offset) { |width, height, offset|
           width*height - offset
         }
@@ -204,7 +204,7 @@ module CompTree
 
     def test_method_missing_intact
       assert_raise(NoMethodError) {
-        CompTree::Driver.new { |driver|
+        CompTree.build { |driver|
           driver.junk
         }
       }
@@ -216,7 +216,7 @@ module CompTree
           "--data--"
         end
       }
-      CompTree::Driver.new(:node_class => subclass) { |driver|
+      CompTree.build(:node_class => subclass) { |driver|
         driver.define(:a) {
         }
         assert_equal("--data--", driver.nodes[:a].stuff)
@@ -224,7 +224,7 @@ module CompTree
     end
 
     def generate_comp_tree(num_levels, num_children, drain_iterations)
-      CompTree::Driver.new { |driver|
+      CompTree.build { |driver|
         root = :aaa
         last_name = root
         pick_names = lambda { |*args|
@@ -252,6 +252,7 @@ module CompTree
           end
         }
         build_tree.call(root, pick_names.call, drain_iterations)
+        driver
       }
     end
 
@@ -298,7 +299,7 @@ module CompTree
     end
     
     def run_drain(threads)
-      CompTree::Driver.new { |driver|
+      CompTree.build { |driver|
         func = lambda { |*args|
           drain
         }

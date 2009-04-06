@@ -12,9 +12,11 @@ module CompTree
   #
   class Driver
     include Algorithm
-    
+
     #
-    # Begin a new computation tree.
+    # Build and run a new computation tree.
+    #
+    # If a block is passed, the new instance is passed to it.
     #
     # Options hash:
     #

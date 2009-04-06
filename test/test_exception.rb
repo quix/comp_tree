@@ -11,7 +11,7 @@ module CompTree
       [true, false].each { |define_all|
         error = (
           begin
-            CompTree::Driver.new { |driver|
+            CompTree.build { |driver|
               driver.define(:area, :width, :height, :offset) {
                 |width, height, offset|
                 width*height - offset

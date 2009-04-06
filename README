@@ -5,7 +5,7 @@
   
   require 'comp_tree'
   
-  CompTree::Driver.new { |driver|
+  CompTree.build { |driver|
 
     # Define a function named 'area' taking these three arguments.
     driver.define_area(:width, :height, :offset) { |width, height, offset|

@@ -6,7 +6,7 @@ require 'test/unit'
 module CompTree
   class TestCircular < Test::Unit::TestCase
     def test_1
-      CompTree::Driver.new { |driver|
+      CompTree.build { |driver|
         driver.define(:area, :width, :height, :offset) { |width, height, offset|
           width*height - offset
         }
