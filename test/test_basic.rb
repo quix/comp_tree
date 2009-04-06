@@ -30,6 +30,15 @@ class TestBasic < Test::Unit::TestCase
     }
   end
 
+  def test_already_computed
+    CompTree.build { |driver|
+      driver.define(:a) { 33 }
+      (1..3).each { |n|
+        assert_equal(33, driver.compute(:a, n))
+      }
+    }
+  end
+
   def test_threads_opt
     (1..20).each { |threads|
       CompTree.build do |driver|

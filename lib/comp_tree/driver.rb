@@ -142,11 +142,13 @@ module CompTree
         raise ArgumentError, "threads is #{threads}"
       end
 
-      if threads == 1
-        root.result = root.compute_now
-      else
-        compute_multithreaded(root, threads)
-      end
+      root.result or (
+        if threads == 1
+          root.result = root.compute_now
+        else
+          compute_multithreaded(root, threads)
+        end
+      )
     end
   end
 end
