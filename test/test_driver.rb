@@ -39,7 +39,7 @@ module CompTree
   module TestBase
     include TestCommon
 
-    def test_1_syntax
+    def test_define
       CompTree.build { |driver|
         driver.define(:area, :width, :height, :offset) { |width, height, offset|
           width*height - offset
@@ -65,58 +65,6 @@ module CompTree
       }
     end
 
-    def test_2_syntax
-      CompTree.build { |driver|
-        driver.define_area(:width, :height, :offset) { |width, height, offset|
-          width*height - offset
-        }
-        
-        driver.define_width(:border) { |border|
-          2 + border
-        }
-        
-        driver.define_height(:border) { |border|
-          3 + border
-        }
-        
-        driver.define_border {
-          5
-        }
-        
-        driver.define_offset {
-          7
-        }
-        
-        assert_equal((2 + 5)*(3 + 5) - 7, driver.compute(:area, 6))
-      }
-    end
-
-    def test_3_syntax
-      CompTree.build { |driver|
-        driver.define_area :width, :height, :offset, %{
-          width*height - offset
-        }
-        
-        driver.define_width :border, %{
-          2 + border
-        }
-        
-        driver.define_height :border, %{
-          3 + border
-        }
-        
-        driver.define_border %{
-          5
-        }
-        
-        driver.define_offset %{
-          7
-        }
-
-        assert_equal((2 + 5)*(3 + 5) - 7, driver.compute(:area, 6))
-      }
-    end
-
     def test_threads_opt
       CompTree.build do |driver|
         driver.define(:a) { 9 }
@@ -130,8 +78,8 @@ module CompTree
           drain = lambda { |*args|
             1.times { }
           }
-          driver.define_a(:b, &drain)
-          driver.define_b(&drain)
+          driver.define(:a, :b, &drain)
+          driver.define(:b, &drain)
           driver.compute(:a, num_threads)
         }
       }
@@ -183,23 +131,23 @@ module CompTree
     def test_exception_in_compute
       test_error = Class.new(RuntimeError)
       CompTree.build { |driver|
-        driver.define_area(:width, :height, :offset) { |width, height, offset|
+        driver.define(:area, :width, :height, :offset) { |width, height, offset|
           width*height - offset
         }
         
-        driver.define_width(:border) { |border|
+        driver.define(:width, :border) { |border|
           2 + border
         }
         
-        driver.define_height(:border) { |border|
+        driver.define(:height, :border) { |border|
           3 + border
         }
         
-        driver.define_border {
+        driver.define(:border) {
           raise test_error
         }
         
-        driver.define_offset {
+        driver.define(:offset) {
           7
         }
         
@@ -310,11 +258,11 @@ module CompTree
         func = lambda { |*args|
           drain
         }
-        driver.define_area(:width, :height, :offset, &func)
-        driver.define_width(:border, &func)
-        driver.define_height(:border, &func)
-        driver.define_border(&func)
-        driver.define_offset(&func)
+        driver.define(:area, :width, :height, :offset, &func)
+        driver.define(:width, :border, &func)
+        driver.define(:height, :border, &func)
+        driver.define(:border, &func)
+        driver.define(:offset, &func)
         bench_output "number of threads: #{threads}"
         bench = Benchmark.measure { driver.compute(:area, threads) }
         bench_output bench

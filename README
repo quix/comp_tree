@@ -8,22 +8,22 @@
   CompTree.build do |driver|
 
     # Define a function named 'area' taking these three arguments.
-    driver.define_area(:width, :height) { |width, height|
+    driver.define(:area, :width, :height) { |width, height|
       width*height
     }
     
     # Define a function 'width' which takes a 'border' argument.
-    driver.define_width(:border) { |border|
+    driver.define(:width, :border) { |border|
       7 + border
     }
     
     # Ditto for 'height'.
-    driver.define_height(:border) { |border|
+    driver.define(:height, :border) { |border|
       5 + border
     }
     
     # Define a constant function 'border'.
-    driver.define_border {
+    driver.define(:border) {
       2
     }
     
@@ -35,32 +35,6 @@
     puts((7 + 2)*(5 + 2))
     # => 63
   end
-
-=== Alternative Forms for Function Definitions
-
-This form evals a lambda, saving you the repeat parameter list:
-
-  driver.define_area :width, :height %{
-    width*height
-  }
-  
-  driver.define_width :border, %{
-    2 + border
-  }
-  
-Notice the '<code>%</code>' before the brace.  The lambda is created
-just once, during the time of definition.
-
-Finally there is the raw form which uses no +eval+ or
-+method_missing+ tricks:
-
-  driver.define(:area, :width, :height) { |width, height|
-    width*height
-  }
-        
-  driver.define(:width, :border) { |border|
-    2 + border
-  }
 
 == Important Notes
 
@@ -75,7 +49,7 @@ function you define must explicitly depend on the data it uses.
   #
   # BAD example: depending on state -- offset not listed as a parameter
   #
-  driver.define_area(:width, :height) { |width, height|
+  driver.define(:area, :width, :height) { |width, height|
     width*height - offset
   }
 
@@ -89,7 +63,7 @@ to affect a state (to produce a <em>side effect</em>).
   #
   # BAD example: affecting state
   #
-  driver.define_area(:width, :height) { |width, height|
+  driver.define(:area, :width, :height) { |width, height|
     ACCUMULATOR.add "more data"
     width*height
   }

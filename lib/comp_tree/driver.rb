@@ -46,25 +46,22 @@ module CompTree
     #
     # Define a computation node.
     #
-    # There are three distinct forms of a node definition.  In each of
-    # the following examples, a computation node named +area+ is
-    # defined which depends on the nodes +height+, +width+, +offset+.
+    # The first argument is the name of the node to define.
+    # Subsequent arguments are are the names of its children, which
+    # are the inputs to this node.
     #
-    # The method_missing form:
-    #  driver.define_area(:width, :height, :offset) { |width, height, offset|
-    #    width*height - offset
-    #  }
+    # The input values are passed to the block.  The block returns the
+    # result of this node.
     #
-    # The eval form:
-    #  driver.define_area :width, :height, :offset, %{
-    #    width*height - offset
-    #  }
-    # (Note the '%' before the brace.)
+    # In this example, a computation node named +area+ is defined
+    # which depends on the nodes +height+ and +width++.
     #
-    # The raw form:
-    #  driver.define(:area, :width, :height, :offset) { |width, height, offset|
-    #    width*height - offset
-    #  }
+    #   driver.define(:area, :width, :height) { |width, height|
+    #     width*height
+    #   }
+    #
+    # NOTE: You must return a non-nil value to signal the computation
+    # is complete.  If nil is returned, the node will be recomputed.
     #
     def define(*args, &block)
       parent_name = args.first
@@ -104,42 +101,6 @@ module CompTree
       children.each { |child|
         child.parents << parent
       }
-    end
-
-    #
-    # parsing/evaling helper
-    #
-    def evaling_define(*args) #:nodoc:
-      function_name = args[0]
-      function_arg_names = args[1..-2]
-      function_string = args.last.to_str
-      
-      comma_separated = function_arg_names.map { |name|
-        name.to_s
-      }.join(",")
-
-      eval_me = %{ 
-        lambda { |#{comma_separated}|
-          #{function_string}
-        }
-      }
-
-      function = eval(eval_me, TOPLEVEL_BINDING)
-
-      define(function_name, *function_arg_names, &function)
-    end
-
-    def method_missing(symbol, *args, &block) #:nodoc:
-      if match = symbol.to_s.match(%r!\Adefine_(\w+)\Z!)
-        method_name = match.captures.first.to_sym
-        if block
-          define(method_name, *args, &block)
-        else
-          evaling_define(method_name, *args)
-        end
-      else
-        super(symbol, *args, &block)
-      end
     end
 
     #
