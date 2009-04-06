@@ -71,7 +71,7 @@ module CompTree
       children_names = args[1..-1]
       
       unless parent_name
-        raise Error::ArgumentError, "No name given for node"
+        raise ArgumentError, "No name given for node"
       end
       
       #
@@ -85,7 +85,7 @@ module CompTree
         end
 
       if parent.function
-        raise Error::RedefinitionError, "Node #{parent.name} already defined."
+        raise RedefinitionError, "Node #{parent.name} already defined."
       end
       parent.function = block
       
@@ -155,7 +155,7 @@ module CompTree
 
     #
     # Check for a cyclic graph below the given node.  Raises
-    # CompTree::Error::CircularError if found.
+    # CompTree::CircularError if found.
     #
     # Arguments:
     #
@@ -164,7 +164,7 @@ module CompTree
     def check_circular(name)
       helper = lambda { |root, chain|
         if chain.include? root
-          raise Error::CircularError,
+          raise CircularError,
             "Circular dependency detected: #{root} => #{chain.last} => #{root}"
         end
         @nodes[root].children.each { |child|
@@ -187,7 +187,7 @@ module CompTree
       root = @nodes[name]
 
       if threads < 1
-        raise Error::ArgumentError, "threads is #{threads}"
+        raise ArgumentError, "threads is #{threads}"
       end
 
       if threads == 1

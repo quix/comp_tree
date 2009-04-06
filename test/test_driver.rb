@@ -150,22 +150,22 @@ module CompTree
 
     def test_malformed
       CompTree.build { |driver|
-        assert_raise(CompTree::Error::ArgumentError) {
+        assert_raise(CompTree::ArgumentError) {
           driver.define {
           }
         }
-        assert_raise(CompTree::Error::RedefinitionError) {
+        assert_raise(CompTree::RedefinitionError) {
           driver.define(:a) {
           }
           driver.define(:a) {
           }
         }
-        assert_raise(CompTree::Error::ArgumentError) {
+        assert_raise(CompTree::ArgumentError) {
           driver.define(:b) {
           }
           driver.compute(:b, 0)
         }
-        assert_raise(CompTree::Error::ArgumentError) {
+        assert_raise(CompTree::ArgumentError) {
           driver.define(:c) {
           }
           driver.compute(:c, -1)

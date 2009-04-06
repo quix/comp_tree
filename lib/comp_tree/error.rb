@@ -1,27 +1,25 @@
 
 module CompTree
-  module Error
-    # Base class for CompTree errors.
-    class Base < StandardError ; end
+  # Base class for CompTree errors.
+  class Error < StandardError ; end
     
-    # Internal error inside CompTree.  Please send a bug report.
-    class AssertionFailed < Base ; end
-    
-    # Bad arguments were passed to a method.
-    class ArgumentError < Base ; end
-    
-    #
-    # Attempt to redefine a Node.
-    #
-    # If you wish to only replace the function, set
-    #   driver.nodes[name].function = some_new_lambda
-    #
-    class RedefinitionError < Base ; end
-    
-    # A Cyclic graph was detected.
-    class CircularError < Base ; end
+  # Internal error inside CompTree.  Please send a bug report.
+  class AssertionFailedError < Error ; end
+  
+  # Bad arguments were passed to a method.
+  class ArgumentError < Error ; end
+  
+  #
+  # Attempt to redefine a Node.
+  #
+  # If you wish to only replace the function, set
+  #   driver.nodes[name].function = some_new_lambda
+  #
+  class RedefinitionError < Error ; end
+  
+  # A Cyclic graph was detected.
+  class CircularError < Error ; end
 
-    # No function was defined for this node.
-    class NoFunctionError < Base ; end
-  end
+  # No function was defined for this node.
+  class NoFunctionError < Error ; end
 end

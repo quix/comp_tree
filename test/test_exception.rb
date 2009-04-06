@@ -46,7 +46,7 @@ module CompTree
         if define_all
           assert_block { error.is_a? CompTreeTestError }
         else
-          assert_block { error.is_a? CompTree::Error::NoFunctionError }
+          assert_block { error.is_a? CompTree::NoFunctionError }
         end
       }
     end
