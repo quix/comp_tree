@@ -113,4 +113,44 @@ class TestBasic < Test::Unit::TestCase
       assert_equal(data, driver.nodes[:a].stuff)
     }
   end
+
+  def test_non_symbols
+    width_id = Object.new
+    height_id = 272727
+    (1..3).each { |threads|
+      CompTree.build { |driver|
+        driver.define("area", width_id, height_id, :offset) {
+          |width, height, offset|
+          width*height - offset
+        }
+          
+        driver.define(width_id, :border) { |border|
+          2 + border
+        }
+          
+        driver.define(height_id, :border) { |border|
+          3 + border
+        }
+          
+        driver.define(:border) {
+          5
+        }
+          
+        driver.define(:offset) {
+          7
+        }
+          
+        assert_equal((2 + 5)*(3 + 5) - 7, driver.compute("area", threads))
+      }
+    }
+  end
+
+  def test_node_name_equality_comparison
+    CompTree.build { |driver|
+      driver.define("hello") { }
+      assert_raise(CompTree::RedefinitionError) {
+        driver.define("hello") { }
+      }
+    }
+  end
 end

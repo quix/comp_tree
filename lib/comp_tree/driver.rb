@@ -72,7 +72,7 @@ module CompTree
       )
 
       if parent.function
-        raise RedefinitionError, "Node #{parent.name} already defined."
+        raise RedefinitionError, "Node `#{parent.name.inspect}' redefined."
       end
       parent.function = block
       
@@ -96,7 +96,7 @@ module CompTree
     #
     # Arguments:
     #
-    # +name+ -- (Symbol) node name.
+    # +name+ -- unique node identifier (usually a symbol).
     #
     def reset(name)
       @nodes[name].reset
@@ -108,7 +108,7 @@ module CompTree
     #
     # Arguments:
     #
-    # +name+ -- (Symbol) node name.
+    # +name+ -- unique node identifier (usually a symbol).
     #
     def check_circular(name)
       helper = lambda { |root, chain|
@@ -128,7 +128,7 @@ module CompTree
     #
     # Arguments:
     #
-    # +name+ -- (Symbol) node name.
+    # +name+ -- unique node identifier (usually a symbol).
     #
     # +threads+ -- (Integer) number of threads.
     #
