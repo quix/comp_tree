@@ -17,9 +17,6 @@ module CompTree
   #
   class RedefinitionError < Error ; end
   
-  # A Cyclic graph was detected.
-  class CircularError < Error ; end
-
   # No function was defined for this node.
   class NoFunctionError < Error ; end
 end

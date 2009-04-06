@@ -23,9 +23,17 @@ class TestCircular < Test::Unit::TestCase
         7
       }
 
-      assert_raises(CompTree::CircularError) {
-        driver.check_circular(:area)
-      }
+      assert_equal([:area, :offset, :area], driver.check_circular(:area))
+      assert_equal([:offset, :area, :offset], driver.check_circular(:offset))
+    }
+  end
+
+  def test_not_circular
+    CompTree.build { |driver|
+      driver.define(:a, :b) { true }
+      driver.define(:b) { true }
+      assert_nil(driver.check_circular(:a))
+      assert_nil(driver.check_circular(:b))
     }
   end
 end

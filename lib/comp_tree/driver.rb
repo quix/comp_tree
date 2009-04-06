@@ -103,24 +103,25 @@ module CompTree
     end
 
     #
-    # Check for a cyclic graph below the given node.  Raises
-    # CompTree::CircularError if found.
+    # Check for a cyclic graph below the given node.  If found,
+    # returns the names of the nodes (in order) which form a loop.
+    # Otherwise returns nil.
     #
     # Arguments:
     #
     # +name+ -- unique node identifier (usually a symbol).
     #
     def check_circular(name)
-      helper = lambda { |root, chain|
+      helper = Proc.new { |root, chain|
         if chain.include? root
-          raise CircularError,
-            "Circular dependency detected: #{root} => #{chain.last} => #{root}"
+          return chain + [root]
         end
         @nodes[root].children.each { |child|
           helper.call(child.name, chain + [root])
         }
       }
       helper.call(name, [])
+      nil
     end
 
     #
