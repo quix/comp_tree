@@ -1,26 +1,28 @@
 require File.dirname(__FILE__) + "/common"
 
-TREE_GENERATION_DATA = {
-  :level_range => 1..4,
-  :children_range => 1..6,
-  :thread_range => 1..6,
-  :drain_iterations => 0,
-}
-
 class TestGrind < Test::Unit::TestCase
   include TestCommon
 
+  GENERATOR_DATA = {
+    :level_range => 1..4,
+    :children_range => 1..6,
+    :thread_range => 1..6,
+    :drain_iterations => 0,
+  }
+
+  ROOT = 'a'
+
   def test_grind
-    run_generated_tree(TREE_GENERATION_DATA)
+    run_generated_tree(GENERATOR_DATA)
   end
 
   def generate_comp_tree(num_levels, num_children, drain_iterations)
     CompTree.build { |driver|
-      root = :aaa
-      last_name = root
+      name_gen = ROOT.dup
       pick_names = lambda { |*args|
         (0..rand(num_children)).map {
-          last_name = last_name.to_s.succ.to_sym
+          name_gen.succ!
+          name_gen.dup
         }
       }
       drain = lambda { |*args|
@@ -42,7 +44,7 @@ class TestGrind < Test::Unit::TestCase
           }
         end
       }
-      build_tree.call(root, pick_names.call, drain_iterations)
+      build_tree.call(ROOT, pick_names.call, drain_iterations)
       driver
     }
   end
@@ -60,10 +62,10 @@ class TestGrind < Test::Unit::TestCase
         args[:thread_range].each { |threads|
          bench_output {%{threads}}
           2.times {
-            driver.reset(:aaa)
+            driver.reset(ROOT)
             result = nil
             bench = Benchmark.measure {
-              result = driver.compute(:aaa, threads)
+              result = driver.compute(ROOT, threads)
             }
             bench_output bench
             assert_equal(result, args[:drain_iterations])
