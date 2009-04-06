@@ -4,8 +4,7 @@ class TestBasic < Test::Unit::TestCase
   def test_define
     (1..20).each { |threads|
       CompTree.build { |driver|
-        driver.define(:area, :width, :height, :offset) {
-          |width, height, offset|
+        driver.define(:area, :width, :height, :offset) { |width, height, offset|
           width*height - offset
         }
         
@@ -103,15 +102,15 @@ class TestBasic < Test::Unit::TestCase
   end
 
   def test_node_subclass
+    data = Object.new
     subclass = Class.new(CompTree::Node) {
-      def stuff
-        "--data--"
+      define_method :stuff do
+        data
       end
     }
     CompTree.build(:node_class => subclass) { |driver|
-      driver.define(:a) {
-      }
-      assert_equal("--data--", driver.nodes[:a].stuff)
+      driver.define(:a) { }
+      assert_equal(data, driver.nodes[:a].stuff)
     }
   end
 end
