@@ -1,38 +1,36 @@
 
-Gem::Specification.new { |t|
-  t.author = "James M. Lawrence"
-  t.email = "quixoticsycophant@gmail.com"
-  t.summary = "Parallel Computation Tree"
-  t.name = "comp_tree"
-  t.rubyforge_project = "comptree"
-  t.homepage = "comptree.rubyforge.org"
-  t.version = "0.5.2"
-  t.description = "Build a computation tree and execute it with N " +
-    "parallel threads.  Optionally fork computation nodes into new processes."
+Gem::Specification.new { |g|
+  g.author = "James M. Lawrence"
+  g.email = "quixoticsycophant@gmail.com"
+  g.summary = "Parallel Computation Tree"
+  g.name = "comp_tree"
+  g.rubyforge_project = "comptree"
+  g.homepage = "comptree.rubyforge.org"
+  g.version = "0.6.0"
+  g.description =
+    "Build a computation tree and execute it with N parallel threads."
 
-  t.files = %w{README comp_tree.gemspec} +
-    Dir["./**/*.rb"] +
-    Dir["./**/Rakefile"]
+  readme = "README"
 
-  rdoc_exclude = %w{
-    test
-    contrib
-    install
-    quix
-    fork
-    diagnostic
-    algorithm
-    bucket
-    comp_tree\.rb
+  g.files = %W[
+    CHANGES
+    #{readme}
+    Rakefile
+    #{g.name}.gemspec
+    install.rb
+  ] + %w[lib rakelib test].inject(Array.new) { |acc, dir|
+    acc + Dir[dir + "/**/*.rb"]
   }
-  t.has_rdoc = true
-  t.extra_rdoc_files = %w{README}
-  t.rdoc_options += [
+  g.has_rdoc = true
+  rdoc_files = [readme] + Dir["lib/#{g.name}/*.rb"]
+  g.extra_rdoc_files += [readme]
+
+  g.rdoc_options += [
     "--main",
-    "README",
+    readme,
     "--title",
-    "comp_tree: #{t.summary}",
-  ] + rdoc_exclude.inject(Array.new) { |acc, pattern|
-    acc + ["--exclude", pattern]
+    "#{g.name}: #{g.summary}"
+  ] + (g.files - rdoc_files).inject(Array.new) { |acc, file|
+    acc + ["--exclude", file]
   }
 }

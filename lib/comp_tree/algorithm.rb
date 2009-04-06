@@ -36,7 +36,7 @@ module CompTree
 
           loop_with(:leave, :again) {
             node = tree_mutex.synchronize {
-              #trace "Thread #{thread_index} aquired tree lock; begin node search"
+              #trace "Thread #{thread_index} aquired tree lock; begin search"
               if result
                 #trace "Thread #{thread_index} detected finish"
                 num_threads_in_use -= 1
