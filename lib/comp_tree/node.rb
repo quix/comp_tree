@@ -98,9 +98,9 @@ module CompTree
     #  debug {
     #    # --- own mutex
     #    trace "Computing #{@name}"
-    #    raise AssertionFailed if @result
-    #    raise AssertionFailed unless @mutex.locked?
-    #    raise AssertionFailed unless @children_results
+    #    raise AssertionFailedError if @result
+    #    raise AssertionFailedError unless @mutex.locked?
+    #    raise AssertionFailedError unless @children_results
     #  }
     #end
 
