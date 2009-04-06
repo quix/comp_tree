@@ -183,7 +183,10 @@ module CompTree
     #
     # +threads+ -- (Integer) number of threads.
     #
-    def compute(name, threads)
+    # compute(:volume, :threads => 4) syntax is also accepted.
+    #
+    def compute(name, opts)
+      threads = (opts.respond_to?(:to_i) ? opts : opts[:threads]).to_i
       root = @nodes[name]
 
       if threads < 1

@@ -28,7 +28,7 @@
     }
     
     # Compute the area using four parallel threads.
-    puts driver.compute(:area, 4)
+    puts driver.compute(:area, :threads => 4)
     # => 63
 
     # We've done this computation.

@@ -117,6 +117,13 @@ module CompTree
       }
     end
 
+    def test_threads_opt
+      CompTree.build do |driver|
+        driver.define(:a) { 9 }
+        assert_equal(9, driver.compute(:a, :threads => 3))
+      end
+    end
+
     def test_thread_flood
       (1..200).each { |num_threads|
         CompTree.build { |driver|
