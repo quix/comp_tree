@@ -5,7 +5,7 @@
   
   require 'comp_tree'
   
-  CompTree.build { |driver|
+  CompTree.build do |driver|
 
     # Define a function named 'area' taking these three arguments.
     driver.define_area(:width, :height, :offset) { |width, height, offset|
@@ -33,7 +33,7 @@
     }
     
     # Compute the area using four parallel threads.
-    area = driver.compute(:area, :threads => 4)
+    area = driver.compute(:area, 4)
 
     # We've done this computation.
     if area == (2 + 5)*(3 + 5) - 7
@@ -41,7 +41,7 @@
     else
       puts "Send bug report to ..."
     end
-  }
+  end
 
 === Alternative Forms for Function Definitions
 
