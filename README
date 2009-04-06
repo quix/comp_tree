@@ -7,7 +7,7 @@
   
   CompTree.build do |driver|
 
-    # Define a function named 'area' taking these three arguments.
+    # Define a function named 'area' taking these two arguments.
     driver.define(:area, :width, :height) { |width, height|
       width*height
     }
