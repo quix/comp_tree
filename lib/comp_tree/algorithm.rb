@@ -15,9 +15,7 @@ module CompTree
 
     def compute_multithreaded(root, num_threads)
       #trace "Computing #{root.name} with #{num_threads} threads"
-
       result = nil
-
       tree_mutex = Mutex.new
       node_finished_condition = ConditionVariable.new
       thread_wake_condition = ConditionVariable.new

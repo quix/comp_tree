@@ -35,11 +35,7 @@ module CompTree
     # which nodes are created.
     #
     def build(opts = nil)
-      result = nil
-      Driver.new(opts) { |driver|
-        result = yield driver
-      }
-      result
+      yield Driver.new(opts)
     end
   end
 end

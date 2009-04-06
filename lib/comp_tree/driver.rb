@@ -16,26 +16,20 @@ module CompTree
     #
     # Build and run a new computation tree.
     #
-    # If a block is passed, the new instance is passed to it.
-    #
     # Options hash:
     #
     # <tt>:node_class</tt> -- (Class) CompTree::Node subclass from
     # which nodes are created.
     #
     def initialize(opts = nil)
-      @node_class =
+      @node_class = (
         if opts and opts[:node_class]
           opts[:node_class]
         else
           Node
         end
-
+      )
       @nodes = Hash.new
-
-      if block_given?
-        yield self
-      end
     end
 
     #
@@ -47,14 +41,13 @@ module CompTree
     # Define a computation node.
     #
     # The first argument is the name of the node to define.
-    # Subsequent arguments are are the names of its children, which
-    # are the inputs to this node.
+    # Subsequent arguments are the names of this node's children.
     #
-    # The input values are passed to the block.  The block returns the
-    # result of this node.
+    # The values of the child nodes are passed to the block.  The
+    # block returns the result of this node.
     #
     # In this example, a computation node named +area+ is defined
-    # which depends on the nodes +height+ and +width++.
+    # which depends on the nodes +width+ and +height+.
     #
     #   driver.define(:area, :width, :height) { |width, height|
     #     width*height
@@ -74,12 +67,9 @@ module CompTree
       #
       # retrieve or create parent and children
       #
-      parent =
-        if t = @nodes[parent_name]
-          t
-        else 
-          @nodes[parent_name] = @node_class.new(parent_name)
-        end
+      parent = @nodes[parent_name] || (
+        @nodes[parent_name] = @node_class.new(parent_name)
+      )
 
       if parent.function
         raise RedefinitionError, "Node #{parent.name} already defined."
@@ -87,11 +77,9 @@ module CompTree
       parent.function = block
       
       children = children_names.map { |child_name|
-        if t = @nodes[child_name]
-          t
-        else
+        @nodes[child_name] || (
           @nodes[child_name] = @node_class.new(child_name)
-        end
+        )
       }
 
       #
