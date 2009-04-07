@@ -133,7 +133,7 @@ module CompTree
     # compute(:volume, :threads => 4) syntax is also accepted.
     #
     def compute(name, opts)
-      threads = (opts.respond_to?(:to_i) ? opts : opts[:threads]).to_i
+      threads = opts.is_a?(Hash) ? opts[:threads] : opts
       root = @nodes[name]
 
       if threads < 1
