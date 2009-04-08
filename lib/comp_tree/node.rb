@@ -15,15 +15,17 @@ module CompTree
     attr_accessor :computed             #:nodoc:
     attr_accessor :shared_lock          #:nodoc:
 
+    attr_writer :children_results       #:nodoc:
+
     #
     # Create a node
     #
     def initialize(name) #:nodoc:
       @name = name
-      @mutex = Mutex.new
-      @children = []
       @parents = []
+      @children = []
       @function = nil
+      @mutex = Mutex.new
       reset_self
     end
 
@@ -31,10 +33,10 @@ module CompTree
     # Reset the computation for this node.
     #
     def reset_self #:nodoc:
-      @shared_lock = 0
-      @children_results = nil
       @result = nil
       @computed = nil
+      @shared_lock = 0
+      @children_results = nil
     end
 
     #
@@ -95,10 +97,6 @@ module CompTree
           child.result
         }
       )
-    end
-
-    def children_results=(value) #:nodoc:
-      @children_results = value
     end
 
     #def trace_compute #:nodoc:
