@@ -22,7 +22,12 @@ Gem::Specification.new { |g|
     acc + Dir[dir + "/**/*.rb"]
   }
   g.has_rdoc = true
-  rdoc_files = [readme] + Dir["lib/#{g.name}/*.rb"]
+  rdoc_files = [
+    readme,
+    "lib/comp_tree.rb",
+    "lib/comp_tree/driver.rb",
+    "lib/comp_tree/error.rb"
+  ]
   g.extra_rdoc_files += [readme]
 
   g.rdoc_options += [

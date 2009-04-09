@@ -36,7 +36,7 @@
     # => 63
   end
 
-== Important Notes
+== Notes
 
 The user should have a basic understanding of <em>functional
 programming</em> (see for example

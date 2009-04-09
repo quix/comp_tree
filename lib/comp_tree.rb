@@ -22,6 +22,11 @@
 
 require 'comp_tree/driver'
 
+#
+# CompTree -- Parallel Computation Tree.
+#
+# See README.
+#
 module CompTree
   class << self
     #
@@ -33,6 +38,39 @@ module CompTree
     #
     # <tt>:node_class</tt> -- (Class) CompTree::Node subclass from
     # which nodes are created.
+    #
+    # Example:
+    #   CompTree.build do |driver|
+    # 
+    #     # Define a function named 'area' taking these two arguments.
+    #     driver.define(:area, :width, :height) { |width, height|
+    #       width*height
+    #     }
+    #     
+    #     # Define a function 'width' which takes a 'border' argument.
+    #     driver.define(:width, :border) { |border|
+    #       7 + border
+    #     }
+    #     
+    #     # Ditto for 'height'.
+    #     driver.define(:height, :border) { |border|
+    #       5 + border
+    #     }
+    # 
+    #     #    
+    #     # Define a constant function 'border'.
+    #     driver.define(:border) {
+    #       2
+    #     }
+    #     
+    #     # Compute the area using four parallel threads.
+    #     puts driver.compute(:area, :threads => 4)
+    #     # => 63
+    # 
+    #     # We've done this computation.
+    #     puts((7 + 2)*(5 + 2))
+    #     # => 63
+    #   end
     #
     def build(opts = nil)
       yield Driver.new(opts)
