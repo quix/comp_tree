@@ -21,7 +21,7 @@ module CompTree
       finished = nil
       tree_mutex = Mutex.new
       condition = ConditionVariable.new
-      num_threads_in_use = 0
+      num_threads_ready = 0
 
       threads = (0...num_threads).map { |thread_index|
         Thread.new {
@@ -30,7 +30,7 @@ module CompTree
           #
           tree_mutex.synchronize {
             #trace "Thread #{thread_index} waiting to start"
-            num_threads_in_use += 1
+            num_threads_ready += 1
             condition.wait(tree_mutex)
           }
 
@@ -39,7 +39,7 @@ module CompTree
               #trace "Thread #{thread_index} acquired tree lock; begin search"
               if finished
                 #trace "Thread #{thread_index} detected finish"
-                num_threads_in_use -= 1
+                num_threads_ready -= 1
                 throw LEAVE
               else
                 #
@@ -102,13 +102,13 @@ module CompTree
       }
 
       #trace "Main: waiting for threads to launch and block."
-      until tree_mutex.synchronize { num_threads_in_use == num_threads }
+      until tree_mutex.synchronize { num_threads_ready == num_threads }
         Thread.pass
       end
 
       tree_mutex.synchronize {
         #trace "Main: entering main loop"
-        until num_threads_in_use == 0
+        until num_threads_ready == 0
           #trace "Main: waking threads"
           condition.broadcast
 
