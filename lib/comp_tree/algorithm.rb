@@ -13,7 +13,7 @@ module CompTree
       }
     end
 
-    def compute_multithreaded(root, num_threads)
+    def compute_parallel(root, num_threads)
       #trace "Computing #{root.name} with #{num_threads} threads"
       finished = nil
       tree_mutex = Mutex.new

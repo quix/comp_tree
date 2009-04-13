@@ -145,7 +145,7 @@ module CompTree
       elsif threads == 1
         root.result = root.compute_now
       else
-        compute_multithreaded(root, threads)
+        compute_parallel(root, threads)
       end
     end
   end

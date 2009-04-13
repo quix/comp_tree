@@ -69,8 +69,8 @@ module CompTree
     end
 
     #
-    # Force computation of all children; intended for
-    # single-threaded mode.
+    # Force all children and self to be computed; no locking required.
+    # Intended to be used outside of parallel computations.
     #
     def compute_now #:nodoc:
       unless @children_results
