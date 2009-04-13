@@ -1,16 +1,29 @@
 
 module CompTree
   module Algorithm
+    LEAVE = :__comp_tree_leave
+    AGAIN = :__comp_tree_again
+
+    LEAVE_MAIN = :__comp_tree_done_wait
+
     module_function
 
-    def loop_with(leave, again)
-      catch(leave) {
-        while true
-          catch(again) {
+    def loop_with(leave, again = nil)
+      if again
+        catch(leave) {
+          while true
+            catch(again) {
+              yield
+            }
+          end
+        }
+      else
+        catch(leave) {
+          while true
             yield
-          }
-        end
-      }
+          end
+        }
+      end
     end
 
     def compute_parallel(root, num_threads)
@@ -32,13 +45,13 @@ module CompTree
             thread_wake_condition.wait(tree_mutex)
           }
 
-          loop_with(:leave, :again) {
+          loop_with(LEAVE, AGAIN) {
             node = tree_mutex.synchronize {
               #trace "Thread #{thread_index} acquired tree lock; begin search"
               if finished
                 #trace "Thread #{thread_index} detected finish"
                 num_threads_in_use -= 1
-                throw :leave
+                throw LEAVE
               else
                 #
                 # Find a node.  The node we obtain, if any, will be locked.
@@ -50,7 +63,7 @@ module CompTree
                 else
                   #trace "Thread #{thread_index}: no node found; sleeping."
                   thread_wake_condition.wait(tree_mutex)
-                  throw :again
+                  throw AGAIN
                 end
               end
             }
@@ -122,10 +135,10 @@ module CompTree
       }
 
       #trace "Main: waiting for threads to finish."
-      loop_with(:leave, :again) {
+      loop_with(LEAVE_MAIN) {
         tree_mutex.synchronize {
           if threads.all? { |thread| thread.status == false }
-            throw :leave
+            throw LEAVE_MAIN
           end
           thread_wake_condition.broadcast
         }
