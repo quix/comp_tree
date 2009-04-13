@@ -19,7 +19,7 @@ Gem::Specification.new { |g|
     #{g.name}.gemspec
     install.rb
   ] + %w[lib rakelib test].inject(Array.new) { |acc, dir|
-    acc + Dir[dir + "/**/*.rb"]
+    acc + Dir[dir + "/**/*.{rake,rb}"]
   }
   g.has_rdoc = true
   rdoc_files = [
