@@ -25,19 +25,21 @@ require 'comp_tree/driver'
 #
 # CompTree -- Parallel Computation Tree.
 #
-# See README.
+# See README.rdoc.
 #
 module CompTree
   class << self
     #
-    # Build and run a new computation tree.
+    # :call-seq:
+    #   build { |driver| ... }
     #
-    # A Driver instance is passed to the given block.
+    # Build a new computation tree. A Driver instance is passed to the
+    # given block.
     #
     # Options hash:
     #
-    # <tt>:node_class</tt> -- (Class) CompTree::Node subclass from
-    # which nodes are created.
+    # <tt>:node_class</tt> -- CompTree::Node subclass from which nodes
+    # are created.
     #
     # Example:
     #   CompTree.build do |driver|

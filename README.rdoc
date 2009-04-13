@@ -54,7 +54,7 @@ function you define must explicitly depend on the data it uses.
   }
 
 Unless <em>offset</em> is really a constant, the result of
-<tt>driver.compute(:area, :num_threads => n)</tt> is not well-defined
+<tt>driver.compute(:area, :threads => n)</tt> is not well-defined
 for _n_ > 1.
 
 Just as depending on some changeable state is bad, it is likewise bad
@@ -64,12 +64,12 @@ to affect a state (to produce a <em>side effect</em>).
   # BAD example: affecting state
   #
   driver.define(:area, :width, :height) { |width, height|
-    ACCUMULATOR.add "more data"
+    accumulator.add "more data"
     width*height
   }
 
-Given a tree where nodes are modifying _ACCUMULATOR_, the end state of
-_ACCUMULATOR_ is not well-defined.  Moreover if _ACCUMULATOR_ is not
+Given a tree where nodes are modifying _accumulator_, the end state of
+_accumulator_ is not well-defined.  Moreover if _accumulator_ is not
 thread-safe, the result will be even worse.
 
 Note however it is OK affect a state as long as <em>no other function
@@ -80,7 +80,7 @@ depends on that state</em>.  This is the principle under which
 
   % gem install comp_tree
 
-Or for the regular (non-gem) .tgz package,
+Or for the (non-gem) .tgz package,
 
   % ruby install.rb [--uninstall]
 

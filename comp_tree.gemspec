@@ -26,7 +26,8 @@ Gem::Specification.new { |g|
     readme,
     "lib/comp_tree.rb",
     "lib/comp_tree/driver.rb",
-    "lib/comp_tree/error.rb"
+    "lib/comp_tree/error.rb",
+    "lib/comp_tree/node.rb",
   ]
   g.extra_rdoc_files += [readme]
 

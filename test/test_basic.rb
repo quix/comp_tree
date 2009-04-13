@@ -51,7 +51,7 @@ class TestBasic < Test::Unit::TestCase
 
   def test_malformed
     CompTree.build { |driver|
-      assert_raise(CompTree::ArgumentError) {
+      assert_raise(ArgumentError) {
         driver.define {
         }
       }
@@ -60,16 +60,6 @@ class TestBasic < Test::Unit::TestCase
         }
         driver.define(:a) {
         }
-      }
-      assert_raise(CompTree::ArgumentError) {
-        driver.define(:b) {
-        }
-        driver.compute(:b, 0)
-      }
-      assert_raise(CompTree::ArgumentError) {
-        driver.define(:c) {
-        }
-        driver.compute(:c, -1)
       }
     }
   end
