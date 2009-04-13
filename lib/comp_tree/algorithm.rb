@@ -4,26 +4,16 @@ module CompTree
     LEAVE = :__comp_tree_leave
     AGAIN = :__comp_tree_again
 
-    LEAVE_MAIN = :__comp_tree_done_wait
-
     module_function
 
-    def loop_with(leave, again = nil)
-      if again
-        catch(leave) {
-          while true
-            catch(again) {
-              yield
-            }
-          end
-        }
-      else
-        catch(leave) {
-          while true
+    def loop_with(leave, again)
+      catch(leave) {
+        while true
+          catch(again) {
             yield
-          end
-        }
-      end
+          }
+        end
+      }
     end
 
     def compute_parallel(root, num_threads)
@@ -134,15 +124,7 @@ module CompTree
       }
 
       #trace "Main: waiting for threads to finish."
-      loop_with(LEAVE_MAIN) {
-        tree_mutex.synchronize {
-          if threads.all? { |thread| thread.status == false }
-            throw LEAVE_MAIN
-          end
-          thread_wake_condition.broadcast
-        }
-        Thread.pass
-      }
+      threads.each { |t| t.join }
 
       #trace "Main: computation done."
       if finished.is_a? Exception
