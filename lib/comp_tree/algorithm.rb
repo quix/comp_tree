@@ -30,8 +30,7 @@ module CompTree
       #trace "Computing #{root.name} with #{num_threads} threads"
       finished = nil
       tree_mutex = Mutex.new
-      node_finished_condition = ConditionVariable.new
-      thread_wake_condition = ConditionVariable.new
+      condition = ConditionVariable.new
       num_threads_in_use = 0
 
       threads = (0...num_threads).map { |thread_index|
@@ -42,7 +41,7 @@ module CompTree
           tree_mutex.synchronize {
             #trace "Thread #{thread_index} waiting to start"
             num_threads_in_use += 1
-            thread_wake_condition.wait(tree_mutex)
+            condition.wait(tree_mutex)
           }
 
           loop_with(LEAVE, AGAIN) {
@@ -62,7 +61,7 @@ module CompTree
                   node
                 else
                   #trace "Thread #{thread_index}: no node found; sleeping."
-                  thread_wake_condition.wait(tree_mutex)
+                  condition.wait(tree_mutex)
                   throw AGAIN
                 end
               end
@@ -105,7 +104,7 @@ module CompTree
               #
               # Tell the main thread that another node was computed.
               #
-              node_finished_condition.signal
+              condition.signal
             }
           }
           #trace "Thread #{thread_index} exiting"
@@ -121,7 +120,7 @@ module CompTree
         #trace "Main: entering main loop"
         until num_threads_in_use == 0
           #trace "Main: waking threads"
-          thread_wake_condition.broadcast
+          condition.broadcast
 
           if finished
             #trace "Main: detected finish."
@@ -129,7 +128,7 @@ module CompTree
           end
 
           #trace "Main: waiting for a node"
-          node_finished_condition.wait(tree_mutex)
+          condition.wait(tree_mutex)
           #trace "Main: got a node"
         end
       }
