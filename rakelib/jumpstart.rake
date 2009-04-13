@@ -206,7 +206,7 @@ def debug_info(enable)
   Find.find("lib", "test") { |path|
     if path =~ %r!\.rb\Z!
       replace_file(path) { |contents|
-        result1 = comment_regions(!enable, contents, "def trace_compute")
+        result1 = comment_regions(!enable, contents, "def trace_")
         result2 = comment_regions(!enable, result1, "debug")
         comment_lines(!enable, result2, "trace")
       }
