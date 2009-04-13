@@ -1,6 +1,11 @@
 
 = CompTree ChangeLog
 
+== Version 0.7.1
+
+* rename README to README.rdoc for github display
+* internal cleanup 
+
 == Version 0.7.0
 
 * remove fork and discard_result options
