@@ -61,13 +61,12 @@ module CompTree
         # already computed
         #
         nil
-      elsif not node.locked? and (children_results = node.find_children_results)
+      elsif not node.locked? and node.children_results
         #
         # Node is not computed and its children are computed;
         # and we have the lock.  Ready to compute.
         #
         node.lock
-        node.children_results = children_results
         node
       else
         #

@@ -15,8 +15,6 @@ module CompTree
     attr_accessor :computed             #:nodoc:
     attr_accessor :lock_level           #:nodoc:
 
-    attr_writer :children_results       #:nodoc:
-
     #
     # Create a node
     #
@@ -84,12 +82,9 @@ module CompTree
     # If all children have been computed, return their results;
     # otherwise return nil.
     #
-    # Do not assign to @children_results since own lock is not
-    # necessarily aquired.
-    #
-    def find_children_results #:nodoc:
+    def children_results #:nodoc:
       @children_results or (
-        @children.map { |child|
+        @children_results = @children.map { |child|
           unless child.computed
             return nil
           end
