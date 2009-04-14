@@ -1,6 +1,104 @@
 
 module CompTree
   module Algorithm
+    module_function
+
+    def compute_parallel(root, num_threads)
+      to_workers = Queue.new
+      from_workers = Queue.new
+
+      node_to_worker = nil
+      node_from_worker = nil
+
+      num_working = 0
+      finished = nil
+
+      workers = (1..num_threads).map {
+        Thread.new {
+          until (node = to_workers.pop) == :finished
+            node.compute
+            from_workers.push node
+          end
+        }
+      }
+
+      while true
+        node_to_worker = nil
+        if num_working == num_threads or not (node_to_worker = find_node(root))
+          #
+          # max computations running or no nodes available -- wait for results
+          #
+          node_from_worker = from_workers.pop
+          node_from_worker.unlock
+          num_working -= 1
+          if node_from_worker == root or node_from_worker.computed.is_a? Exception
+            finished = node_from_worker
+            break
+          end
+        end
+        if node_to_worker
+          #
+          # found a node
+          #
+          to_workers.push node_to_worker
+          num_working += 1
+        end
+      end
+      
+      num_threads.times { to_workers.push :finished }
+      workers.each { |t| t.join }
+      
+      if finished.computed.is_a? Exception
+        raise finished.computed
+      else
+        finished.result
+      end
+    end
+
+    def find_node(node)
+      # --- only called inside shared tree mutex
+      #trace "Looking for a node, starting with #{node.name}"
+      if node.computed
+        #
+        # already computed
+        #
+        #trace "#{node.name} has been computed"
+        nil
+      elsif (children_results = node.find_children_results) and node.try_lock
+        #
+        # Node is not computed and its children are computed;
+        # and we have the lock.  Ready to compute.
+        #
+        node.children_results = children_results
+        node
+      else
+        #
+        # locked or children not computed; recurse to children
+        #
+        #trace "Checking #{node.name}'s children"
+        node.each_child { |child|
+          next_node = find_node(child) and return next_node
+        }
+        nil
+      end
+    end
+  end
+end
+
+__END__
+
+#
+#  For test_grind.rb the following multi-threaded-node-searching
+#  algorithm was 3x faster than the old queuing algorithm above (using
+#  the same srand, of course).  However it was discovered that when
+#  drain_iterations is _increased_, both algorithms run _faster_ (!!!)
+#  until drain_iterations reaches around 30.  The thread queuing
+#  algorithm was better in the latter range, but not always.  More
+#  investigation is needed.
+# 
+
+module CompTree
+  module Algorithm
     LEAVE = :__comp_tree_leave
     AGAIN = :__comp_tree_again
 
@@ -131,34 +229,6 @@ module CompTree
         raise finished
       else
         root.result
-      end
-    end
-
-    def find_node(node)
-      # --- only called inside shared tree mutex
-      #trace "Looking for a node, starting with #{node.name}"
-      if node.computed
-        #
-        # already computed
-        #
-        #trace "#{node.name} has been computed"
-        nil
-      elsif (children_results = node.find_children_results) and node.try_lock
-        #
-        # Node is not computed and its children are computed;
-        # and we have the lock.  Ready to compute.
-        #
-        node.children_results = children_results
-        node
-      else
-        #
-        # locked or children not computed; recurse to children
-        #
-        #trace "Checking #{node.name}'s children"
-        node.each_child { |child|
-          next_node = find_node(child) and return next_node
-        }
-        nil
       end
     end
   end

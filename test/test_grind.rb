@@ -7,7 +7,7 @@ class TestGrind < Test::Unit::TestCase
     :level_range => 1..4,
     :children_range => 1..6,
     :thread_range => 1..6,
-    :drain_iterations => 0,
+    :drain_iterations => 30,
   }
 
   ROOT = 'a'
