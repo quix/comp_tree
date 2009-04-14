@@ -56,26 +56,23 @@ module CompTree
     end
 
     def find_node(node)
-      # --- only called inside shared tree mutex
-      #trace "Looking for a node, starting with #{node.name}"
       if node.computed
         #
         # already computed
         #
-        #trace "#{node.name} has been computed"
         nil
-      elsif (children_results = node.find_children_results) and node.try_lock
+      elsif not node.locked? and (children_results = node.find_children_results)
         #
         # Node is not computed and its children are computed;
         # and we have the lock.  Ready to compute.
         #
+        node.lock
         node.children_results = children_results
         node
       else
         #
         # locked or children not computed; recurse to children
         #
-        #trace "Checking #{node.name}'s children"
         node.each_child { |child|
           next_node = find_node(child) and return next_node
         }

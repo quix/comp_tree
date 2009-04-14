@@ -13,7 +13,7 @@ module CompTree
     attr_accessor :function             #:nodoc:
     attr_accessor :result               #:nodoc:
     attr_accessor :computed             #:nodoc:
-    attr_accessor :shared_lock          #:nodoc:
+    attr_accessor :lock_level           #:nodoc:
 
     attr_writer :children_results       #:nodoc:
 
@@ -25,7 +25,6 @@ module CompTree
       @parents = []
       @children = []
       @function = nil
-      @mutex = Mutex.new
       reset_self
     end
 
@@ -35,7 +34,7 @@ module CompTree
     def reset_self #:nodoc:
       @result = nil
       @computed = nil
-      @shared_lock = 0
+      @lock_level = 0
       @children_results = nil
     end
 
@@ -99,16 +98,6 @@ module CompTree
       )
     end
 
-    #def trace_compute #:nodoc:
-    #  debug {
-    #    # --- own mutex
-    #    trace "Computing #{@name}"
-    #    raise AssertionFailedError if @computed
-    #    raise AssertionFailedError unless @mutex.locked?
-    #    raise AssertionFailedError unless @children_results
-    #  }
-    #end
-
     #
     # Compute this node; children must be computed and lock must be
     # already acquired.
@@ -127,35 +116,20 @@ module CompTree
       @result
     end
 
-    def try_lock #:nodoc:
-      # --- shared tree mutex and own mutex
-      if @shared_lock == 0 and @mutex.try_lock
-        #trace "Locking #{@name}"
-        each_upward { |node|
-          node.shared_lock += 1
-          #trace "#{node.name} locked by #{@name}: level: #{node.shared_lock}"
-        }
-        true
-      else
-        false
-      end
+    def locked?
+      @lock_level != 0
+    end
+
+    def lock #:nodoc:
+      each_upward { |node|
+        node.lock_level += 1
+      }
     end
 
     def unlock #:nodoc:
-      # --- shared tree mutex and own mutex
-      #debug {
-      #  raise AssertionFailedError unless @mutex.locked?
-      #  trace "Unlocking #{@name}"
-      #}
       each_upward { |node|
-        node.shared_lock -= 1
-        #debug {
-        #  if node.shared_lock == 0
-        #    trace "#{node.name} unlocked by #{@name}"
-        #  end
-        #}
+        node.lock_level -= 1
       }
-      @mutex.unlock
     end
   end
 end
