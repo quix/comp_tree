@@ -1,6 +1,11 @@
 
 = CompTree -- Parallel Computation Tree
 
+== Description
+
+Automatic parallelism and lazy evaluation with pure functional
+programming in Ruby.
+
 == Synopsis
   
   require 'comp_tree'
