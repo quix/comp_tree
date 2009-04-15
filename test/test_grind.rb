@@ -4,9 +4,9 @@ class TestGrind < Test::Unit::TestCase
   include TestCommon
 
   GENERATOR_DATA = {
-    :level_range => 1..4,
-    :children_range => 1..6,
-    :thread_range => 1..6,
+    :level_range => 1..10,
+    :children_range => 1..10,
+    :thread_range => 1..10,
     :drain_iterations => 30,
   }
 
@@ -53,21 +53,22 @@ class TestGrind < Test::Unit::TestCase
     args[:level_range].each { |num_levels|
       args[:children_range].each { |num_children|
         separator
-        bench_output {%{num_levels}}
-        bench_output {%{num_children}}
+        #bench_output {%{num_levels}}
+        #bench_output {%{num_children}}
         driver = generate_comp_tree(
           num_levels,
           num_children,
           args[:drain_iterations])
         args[:thread_range].each { |threads|
-         bench_output {%{threads}}
+         #bench_output {%{threads}}
           2.times {
             driver.reset(ROOT)
-            result = nil
-            bench = Benchmark.measure {
-              result = driver.compute(ROOT, threads)
-            }
-            bench_output bench
+            #result = nil
+            #bench = Benchmark.measure {
+            #  result = driver.compute(ROOT, threads)
+            #}
+            result = driver.compute(ROOT, threads)
+            #bench_output bench
             assert_equal(result, args[:drain_iterations])
           }
         }
