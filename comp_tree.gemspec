@@ -6,7 +6,7 @@ Gem::Specification.new { |g|
   g.name = "comp_tree"
   g.rubyforge_project = "comptree"
   g.homepage = "comptree.rubyforge.org"
-  g.version = "0.7.1"
+  g.version = "0.7.2"
   g.description =
     "Build a computation tree and execute it with N parallel threads."
 
