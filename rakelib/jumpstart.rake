@@ -11,9 +11,7 @@ require "jumpstart/ruby"
 ######################################################################
 # constants
 
-unless defined?(RUBYFORGE_USER)
-  RUBYFORGE_USER = "quix"
-end
+RUBYFORGE_USER = "quix" unless defined? RUBYFORGE_USER
 
 GEMSPEC = eval(File.read(Dir["*.gemspec"].last))
 
@@ -28,6 +26,8 @@ RCOV_OPTIONS = Dir["*"].select { |file|
 }.inject(Array.new) { |acc, file|
   acc + ["--exclude", file + "/"]
 }
+
+GEM, TGZ = %w[gem tgz].map { |e| "pkg/#{GEMSPEC.name}-#{GEMSPEC.version}.#{e}" }
 
 ######################################################################
 # spec
@@ -65,10 +65,9 @@ unless SPEC_FILES.empty?
   end
 
   task :prerelease => :spec_deps
-
   task :default => :spec
 
-  CLEAN.include(SPEC_OUTPUT)
+  CLEAN.include SPEC_OUTPUT
 end
 
 ######################################################################
@@ -256,16 +255,21 @@ task :comments do
 end
 
 ######################################################################
-# release
+# check directory
 
-def git(*args)
-  sh("git", *args)
-end
-
-task :prerelease => :clean do
+task :check_directory do
   unless `git status` =~ %r!nothing to commit \(working directory clean\)!
     raise "Directory not clean"
   end
+end
+
+task GEM => :check_directory
+task TGZ => :check_directory
+
+######################################################################
+# ping
+
+task :ping do
   %w[github.com rubyforge.org].each { |server|
     cmd = "ping " + (
       if Config::CONFIG["host"] =~ %r!darwin!
@@ -280,6 +284,13 @@ task :prerelease => :clean do
   }
 end
 
+######################################################################
+# release
+
+def git(*args)
+  sh("git", *args)
+end
+
 def rubyforge(command, file)
   sh(
     "rubyforge",
@@ -291,19 +302,17 @@ def rubyforge(command, file)
   )
 end
 
-task :finish_release do
-  gem, tgz = %w(gem tgz).map { |ext|
-    "pkg/#{GEMSPEC.name}-#{GEMSPEC.version}.#{ext}"
-  }
+task :prerelease => [:ping, :clean]
 
-  gem_md5, tgz_md5 = [gem, tgz].map { |file|
+task :finish_release do
+  gem_md5, tgz_md5 = [GEM, TGZ].map { |file|
     "#{file}.md5".tap { |md5|
       sh("md5sum #{file} > #{md5}")
     }
   }
 
-  rubyforge("add_release", gem)
-  [gem_md5, tgz, tgz_md5].each { |file|
+  rubyforge("add_release", GEM)
+  [gem_md5, TGZ, tgz_md5].each { |file|
     rubyforge("add_file", file)
   }
 
@@ -330,15 +339,6 @@ def open_browser(*files)
   end
 end
 
-unless respond_to? :tap
-  class Object
-    def tap
-      yield self
-      self
-    end
-  end
-end 
-
 def replace_file(file)
   old_contents = File.read(file)
   yield(old_contents).tap { |new_contents|
@@ -363,3 +363,13 @@ def run_ruby_on_each(*files)
     Jumpstart::Ruby.run_or_raise("-w", file)
   }
 end
+
+unless respond_to? :tap
+  class Object
+    def tap
+      yield self
+      self
+    end
+  end
+end 
+
