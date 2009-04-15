@@ -12,14 +12,14 @@ require "jumpstart/ruby"
 # constants
 
 RUBYFORGE_USER = "quix" unless defined? RUBYFORGE_USER
-
 GEMSPEC = eval(File.read(Dir["*.gemspec"].last))
-
+CHANGES = "CHANGES.rdoc"
 DOC_DIR = "documentation"
 SPEC_FILES = Dir['spec/*_spec.rb'] + Dir['examples/*_example.rb']
 TEST_FILES = Dir['test/test_*.rb']
 RCOV_DIR = "coverage"
 SPEC_OUTPUT = "spec.html"
+GEM, TGZ = %w[gem tgz].map { |e| "pkg/#{GEMSPEC.name}-#{GEMSPEC.version}.#{e}" }
 
 RCOV_OPTIONS = Dir["*"].select { |file|
   File.directory?(file) and file != "lib"
@@ -27,7 +27,6 @@ RCOV_OPTIONS = Dir["*"].select { |file|
   acc + ["--exclude", file + "/"]
 }
 
-GEM, TGZ = %w[gem tgz].map { |e| "pkg/#{GEMSPEC.name}-#{GEMSPEC.version}.#{e}" }
 
 ######################################################################
 # spec
@@ -84,6 +83,7 @@ unless TEST_FILES.empty?
   desc "run tests with rcov"
   task :full_test do
     previous = RakeFileUtils.verbose_flag
+    RakeFileUtils.verbose_flag = false
     begin
       sh("rcov", "-o", RCOV_DIR, *(TEST_FILES + RCOV_OPTIONS))
     ensure
@@ -311,7 +311,7 @@ task :finish_release do
     }
   }
 
-  rubyforge("add_release", GEM)
+  rubyforge("add_release", GEM, "--release_changes", CHANGES, "--preformatted")
   [gem_md5, TGZ, tgz_md5].each { |file|
     rubyforge("add_file", file)
   }
