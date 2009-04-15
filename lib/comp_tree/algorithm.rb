@@ -23,7 +23,6 @@ module CompTree
       }
 
       while true
-        node_to_worker = nil
         if num_working == num_threads or not (node_to_worker = find_node(root))
           #
           # max computations running or no nodes available -- wait for results
@@ -35,13 +34,13 @@ module CompTree
             finished = node_from_worker
             break
           end
-        end
-        if node_to_worker
+        elsif node_to_worker
           #
           # found a node
           #
           to_workers.push node_to_worker
           num_working += 1
+          node_to_worker = nil
         end
       end
       
@@ -73,7 +72,9 @@ module CompTree
         # locked or children not computed; recurse to children
         #
         node.each_child { |child|
-          next_node = find_node(child) and return next_node
+          if found = find_node(child)
+            return found
+          end
         }
         nil
       end
