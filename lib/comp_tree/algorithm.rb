@@ -30,7 +30,8 @@ module CompTree
           node_from_worker = from_workers.pop
           node_from_worker.unlock
           num_working -= 1
-          if node_from_worker == root or node_from_worker.computed.is_a? Exception
+          if node_from_worker == root or
+              node_from_worker.computed.is_a? Exception
             finished = node_from_worker
             break
           end
@@ -62,8 +63,8 @@ module CompTree
         nil
       elsif not node.locked? and node.children_results
         #
-        # Node is not computed and its children are computed;
-        # and we have the lock.  Ready to compute.
+        # Node is not computed, not locked, and its children are
+        # computed; Ready to compute.
         #
         node.lock
         node
@@ -72,9 +73,9 @@ module CompTree
         # locked or children not computed; recurse to children
         #
         node.each_child { |child|
-          if found = find_node(child)
+          found = find_node(child) and (
             return found
-          end
+          )
         }
         nil
       end
