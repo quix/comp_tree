@@ -28,6 +28,8 @@ require 'comp_tree/driver'
 # See README.rdoc.
 #
 module CompTree
+  VERSION = "0.7.2"
+
   class << self
     #
     # :call-seq:

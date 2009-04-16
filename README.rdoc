@@ -1,10 +1,11 @@
 
-= CompTree -- Parallel Computation Tree
+= CompTree
 
-== Description
+* http://comptree.rubyforge.org
 
-Automatic parallelism and lazy evaluation with pure functional
-programming in Ruby.
+== Summary
+
+Automatic parallelism and lazy evaluation.
 
 == Synopsis
   
@@ -41,15 +42,24 @@ programming in Ruby.
     # => 63
   end
 
-== Notes
+== Install
+
+  % gem install comp_tree
+
+Or for the (non-gem) .tgz package,
+
+  % ruby install.rb [--uninstall]
+
+== Description
+
+A computation tree for pure functional programming in Ruby.
 
 The user should have a basic understanding of <em>functional
 programming</em> (see for example
 http://en.wikipedia.org/wiki/Functional_programming) and the meaning
 of <em>side effects</em>.
 
-CompTree requires the user to adopt a functional style.  Every
-function you define must explicitly depend on the data it uses.
+Every function you define must explicitly depend on the data it uses.
 
   #
   # BAD example: depending on state -- offset not listed as a parameter
@@ -80,14 +90,6 @@ thread-safe, the result will be even worse.
 Note however it is OK affect a state as long as <em>no other function
 depends on that state</em>.  This is the principle under which
 +comp_tree+ parallelizes Rake tasks (http://drake.rubyforge.org).
-
-== Install
-
-  % gem install comp_tree
-
-Or for the (non-gem) .tgz package,
-
-  % ruby install.rb [--uninstall]
 
 == Links
 
