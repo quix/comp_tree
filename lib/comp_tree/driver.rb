@@ -118,7 +118,10 @@ module CompTree
     # Any uncomputed children are computed first.
     #
     def compute(name, opts)
-      threads = opts.is_a?(Hash) ? opts[:threads] : opts
+      threads = (opts.is_a?(Hash) ? opts[:threads] : opts).to_i
+      unless threads > 0
+        raise ArgumentError, "number of threads must be greater than zero"
+      end
       root = @nodes[name]
       if root.computed
         root.result

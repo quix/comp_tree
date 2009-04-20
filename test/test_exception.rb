@@ -53,4 +53,16 @@ class TestException < Test::Unit::TestCase
       }
     }
   end 
+
+  def test_num_threads
+    CompTree.build do |driver|
+      driver.define(:root) { }
+      assert_raises(ArgumentError) { driver.compute(:root, 0) }
+      assert_raises(ArgumentError) { driver.compute(:root, :threads => 0) }
+      assert_raises(ArgumentError) { driver.compute(:root, -1) }
+      assert_raises(ArgumentError) { driver.compute(:root, :threads => -1) }
+      assert_raises(ArgumentError) { driver.compute(:root, -11) }
+      assert_raises(ArgumentError) { driver.compute(:root, :threads => -11) }
+    end
+  end
 end
