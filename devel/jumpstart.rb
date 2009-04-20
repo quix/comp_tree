@@ -58,6 +58,10 @@ class Jumpstart
       name.gsub('_', '')
     end
 
+    attribute :rubyforge_user do
+      email.first[%r!^.*(?=@)!]
+    end
+
     attribute :readme_file do
       "README.rdoc"
     end
@@ -371,7 +375,7 @@ class Jumpstart
     task :publish => [:clean_doc, :doc] do
       Rake::SshDirPublisher.new(
         "#{rubyforge_user}@rubyforge.org",
-        "/var/www/gforge-projects/#{rubyforge_project}",
+        "/var/www/gforge-projects/#{rubyforge_name}",
         doc_dir
       ).upload
     end
@@ -496,8 +500,8 @@ class Jumpstart
     sh(
       "rubyforge",
       command,
-      rubyforge_project,
-      rubyforge_project,
+      rubyforge_name,
+      rubyforge_name,
       version.to_s,
       file
     )
@@ -513,13 +517,7 @@ class Jumpstart
         }
       }
 
-      rubyforge(
-        "add_release",
-        gem,
-        "--release_changes",
-        history_file,
-        "--preformatted"
-      )
+      rubyforge("add_release", gem)
       [gem_md5, tgz, tgz_md5].each { |file|
         rubyforge("add_file", file)
       }
