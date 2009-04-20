@@ -1,6 +1,11 @@
 
 = CompTree ChangeLog
 
+== Version 0.7.2
+
+* check for number of threads < 1
+* new benchmarks indicate previous algorithm was faster after all
+
 == Version 0.7.1
 
 * rename README to README.rdoc for github display
