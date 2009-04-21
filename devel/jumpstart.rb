@@ -112,7 +112,19 @@ class Jumpstart
     end
     
     attribute :files do
-      `git ls-files`.split("\n")
+      if File.exist?(manifest = "Manifest.txt")
+        File.read(manifest).split("\n")
+      elsif File.directory? ".git"
+        `git ls-files`.split("\n")
+      elsif File.directory? ".svn"
+        `svn status --verbose`.split("\n").map { |t|
+          t.split[3]
+        }.select { |t|
+          t and File.file?(t)
+        }
+      else
+        []
+      end
     end
 
     attribute :rdoc_files do
@@ -417,7 +429,7 @@ class Jumpstart
       def debug_info(enable)
         Find.find("lib", "test") { |path|
           if path =~ %r!\.rb\Z!
-            replace_file(path) { |contents|
+            Jumpstart.replace_file(path) { |contents|
               result = comment_regions(!enable, contents, "debug")
               comment_lines(!enable, result, "trace")
             }
@@ -539,17 +551,6 @@ class Jumpstart
     sh(*([browser].flatten + files))
   end
 
-  def replace_file(file)
-    old_contents = File.read(file)
-    yield(old_contents).tap { |new_contents|
-      if old_contents != new_contents
-        File.open(file, "wb") { |output|
-          output.print(new_contents)
-        }
-      end
-    }
-  end
-
   def write_file(file)
     yield.tap { |contents|
       File.open(file, "wb") { |out|
@@ -568,12 +569,25 @@ class Jumpstart
     str.split('_').map { |t| t.capitalize }.join
   end
 
-  unless respond_to? :tap
-    class Object
-      def tap
-        yield self
-        self
-      end
+  class << self
+    def replace_file(file)
+      old_contents = File.read(file)
+      yield(old_contents).tap { |new_contents|
+        if old_contents != new_contents
+          File.open(file, "wb") { |output|
+            output.print(new_contents)
+          }
+        end
+      }
+    end
+  end
+end
+
+unless respond_to? :tap
+  class Object
+    def tap
+      yield self
+      self
     end
   end
 end
