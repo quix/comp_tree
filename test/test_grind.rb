@@ -4,13 +4,14 @@ class TestGrind < Test::Unit::TestCase
   include TestCommon
 
   GENERATOR_DATA = {
-    :level_range => 1..10,
-    :children_range => 1..10,
+    :level_range => 1..5,
+    :children_range => 1..5,
     :thread_range => 1..10,
     :drain_iterations => 30,
   }
 
   ROOT = 'a'
+  RETURN_FLAG = rand
 
   def test_grind
     run_generated_tree(GENERATOR_DATA)
@@ -28,6 +29,7 @@ class TestGrind < Test::Unit::TestCase
       drain = lambda { |*args|
         drain_iterations.times {
         }
+        RETURN_FLAG
       }
       build_tree = lambda { |parent, children, level|
         #trace "building #{parent} --> #{children.join(' ')}"
@@ -44,7 +46,7 @@ class TestGrind < Test::Unit::TestCase
           }
         end
       }
-      build_tree.call(ROOT, pick_names.call, drain_iterations)
+      build_tree.call(ROOT, pick_names.call, 0)
       driver
     }
   end
@@ -69,7 +71,7 @@ class TestGrind < Test::Unit::TestCase
             #}
             result = driver.compute(ROOT, threads)
             #bench_output bench
-            assert_equal(result, args[:drain_iterations])
+            assert_equal(result, RETURN_FLAG)
           }
         }
       }
