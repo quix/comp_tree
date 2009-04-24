@@ -1,4 +1,6 @@
 
+require 'comp_tree/queue'
+
 module CompTree
   module Algorithm
     module_function
@@ -22,30 +24,33 @@ module CompTree
         }
       }
 
-      while true
-        if num_working == num_threads or not (node_to_worker = find_node(root))
-          #
-          # max computations running or no nodes available -- wait for results
-          #
-          node_from_worker = from_workers.pop
-          node_from_worker.unlock
-          num_working -= 1
-          if node_from_worker == root or
-              node_from_worker.computed.is_a? Exception
-            finished = node_from_worker
-            break
+      Thread.new {
+        while true
+          if num_working == num_threads or
+              not (node_to_worker = find_node(root))
+            #
+            # maxed out or no nodes available -- wait for results
+            #
+            node_from_worker = from_workers.pop
+            node_from_worker.unlock
+            num_working -= 1
+            if node_from_worker == root or
+                node_from_worker.computed.is_a? Exception
+              finished = node_from_worker
+              break
+            end
+          elsif node_to_worker
+            #
+            # found a node
+            #
+            to_workers.push node_to_worker
+            num_working += 1
+            node_to_worker = nil
           end
-        elsif node_to_worker
-          #
-          # found a node
-          #
-          to_workers.push node_to_worker
-          num_working += 1
-          node_to_worker = nil
         end
-      end
-      
-      num_threads.times { to_workers.push :finished }
+        num_threads.times { to_workers.push :finished }
+      }.join
+
       workers.each { |t| t.join }
       
       if finished.computed.is_a? Exception
