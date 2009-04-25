@@ -105,8 +105,8 @@ module CompTree
         end
         @result = @function.call(*@children_results)
         @computed = true
-      rescue Exception => e
-        @computed = e
+      rescue Exception => exception
+        @computed = exception
       end
       @result
     end

@@ -8,12 +8,7 @@ module CompTree
     def compute_parallel(root, num_threads)
       to_workers = Queue.new
       from_workers = Queue.new
-
-      node_to_worker = nil
-      node_from_worker = nil
-
-      num_working = 0
-      finished = nil
+      final_node = nil
 
       workers = (1..num_threads).map {
         Thread.new {
@@ -25,6 +20,9 @@ module CompTree
       }
 
       Thread.new {
+        node_to_worker = nil
+        node_from_worker = nil
+        num_working = 0
         while true
           if num_working == num_threads or
               not (node_to_worker = find_node(root))
@@ -36,7 +34,7 @@ module CompTree
             num_working -= 1
             if node_from_worker == root or
                 node_from_worker.computed.is_a? Exception
-              finished = node_from_worker
+              final_node = node_from_worker
               break
             end
           elsif node_to_worker
@@ -53,10 +51,10 @@ module CompTree
 
       workers.each { |t| t.join }
       
-      if finished.computed.is_a? Exception
-        raise finished.computed
+      if final_node.computed.is_a? Exception
+        raise final_node.computed
       else
-        finished.result
+        final_node.result
       end
     end
 
