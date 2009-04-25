@@ -17,7 +17,7 @@ module CompTree
 
       workers = (1..num_threads).map {
         Thread.new {
-          until (node = to_workers.pop) == :finished
+          until (node = to_workers.pop) == nil
             node.compute
             from_workers.push node
           end
@@ -48,7 +48,7 @@ module CompTree
             node_to_worker = nil
           end
         end
-        num_threads.times { to_workers.push :finished }
+        num_threads.times { to_workers.push nil }
       }.join
 
       workers.each { |t| t.join }
