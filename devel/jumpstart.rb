@@ -314,7 +314,7 @@ class Jumpstart
         run_ruby_on_each(*spec_files)
       end
 
-      task :prerelease => :spec_deps
+      task :prerelease => [:spec, :spec_deps]
       task :default => :spec
 
       CLEAN.include spec_output
@@ -349,7 +349,7 @@ class Jumpstart
         run_ruby_on_each(*test_files)
       end
       
-      task :prerelease => :test_deps
+      task :prerelease => [:test, :test_deps]
       task :default => :test
       
       CLEAN.include rcov_dir
