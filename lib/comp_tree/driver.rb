@@ -3,8 +3,6 @@ require 'comp_tree/algorithm'
 require 'comp_tree/node'
 require 'comp_tree/error'
 
-require 'thread'
-
 module CompTree
   #
   # Driver is the main interface to the computation tree.  It is
@@ -14,7 +12,7 @@ module CompTree
     include Algorithm
 
     #
-    # See CompTree.build.
+    # See CompTree.build
     #
     def initialize(opts = nil)  #:nodoc:
       @node_class =
@@ -34,7 +32,7 @@ module CompTree
     #
     # _name_ -- unique node identifier (for example a symbol).
     #
-    # _child_names_ -- unique node identifiers for children.
+    # _child_names_ -- unique node identifiers of children.
     #
     # Define a computation node.
     #
