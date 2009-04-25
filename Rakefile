@@ -1,4 +1,4 @@
-$LOAD_PATH.unshift "devel"
+$LOAD_PATH.unshift 'devel'
 
 require 'jumpstart'
 

@@ -1,4 +1,4 @@
-$LOAD_PATH.unshift File.dirname(__FILE__) + "/../lib"
+$LOAD_PATH.unshift File.dirname(__FILE__) + '/../lib'
 
 require 'rubygems'
 require 'ostruct'
@@ -10,9 +10,9 @@ require 'rake/clean'
 
 require 'rdoc/rdoc'
 
-require "jumpstart/ruby"
-require "jumpstart/lazy_attribute"
-require "jumpstart/simple_installer"
+require 'jumpstart/ruby'
+require 'jumpstart/lazy_attribute'
+require 'jumpstart/simple_installer'
 
 class Jumpstart
   include LazyAttribute

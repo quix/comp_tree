@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + "/common"
+require File.dirname(__FILE__) + '/common'
 
 class TestGrind < Test::Unit::TestCase
   include TestCommon

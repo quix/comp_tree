@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + "/common"
+require File.dirname(__FILE__) + '/common'
 
 class TestException < Test::Unit::TestCase
   def test_exception
