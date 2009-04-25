@@ -1,6 +1,10 @@
 
 = CompTree ChangeLog
 
+== Version 0.7.3
+
+* replace standard Queue class
+
 == Version 0.7.2
 
 * check for number of threads < 1
