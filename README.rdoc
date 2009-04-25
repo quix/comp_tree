@@ -5,7 +5,8 @@
 
 == Summary
 
-Automatic parallelism and lazy evaluation.
+Automatic parallelism and lazy evaluation via pure functional
+programming.
 
 == Synopsis
   
@@ -52,7 +53,7 @@ Or for the (non-gem) .tgz package,
 
 == Description
 
-A computation tree for pure functional programming in Ruby.
+CompTree is a framework for parallelizing interrelated computations.
 
 The user should have a basic understanding of <em>functional
 programming</em> (see for example
