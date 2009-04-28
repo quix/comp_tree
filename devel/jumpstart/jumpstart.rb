@@ -242,7 +242,7 @@ class Jumpstart
 
     attribute :url do
       begin
-        readme_contents.match(%r!^\* (\S+)!)[1]
+        readme_contents.match(%r!^\*.*?(http://\S+)!)[1]
       rescue
         "http://#{rubyforge_name}.rubyforge.org"
       end
@@ -500,6 +500,18 @@ class Jumpstart
         unless `#{cmd}` =~ %r!0% packet loss!
           raise "No ping for #{server}"
         end
+      }
+    end
+  end
+
+  def define_update_jumpstart
+    url = ENV["RUBY_JUMPSTART"] || "git://github.com/quix/jumpstart.git"
+    task :update_jumpstart do
+      Dir.chdir("devel") {
+        rm_rf "jumpstart"
+        git "clone", url
+        rm_rf "jumpstart/.git"
+        git "commit", "jumpstart", "-m", "update jumpstart"
       }
     end
   end
