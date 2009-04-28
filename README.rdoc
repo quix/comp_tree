@@ -1,8 +1,6 @@
 
 = CompTree
 
-* http://comptree.rubyforge.org
-
 == Summary
 
 Automatic parallelism and lazy evaluation via pure functional
@@ -94,6 +92,7 @@ depends on that state</em>.  This is the principle under which
 
 == Links
 
+* Documentation: http://comptree.rubyforge.org
 * Download: http://rubyforge.org/frs/?group_id=6917
 * Rubyforge home: http://rubyforge.org/projects/comptree
 * Repository: http://github.com/quix/comp_tree
