@@ -28,7 +28,7 @@ require 'comp_tree/driver'
 # See README.rdoc.
 #
 module CompTree
-  VERSION = "0.7.3"
+  VERSION = "0.7.4"
 
   class << self
     #
