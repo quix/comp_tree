@@ -25,7 +25,7 @@ module CompTree
         num_working = 0
         while true
           if num_working == num_threads or
-              not (node_to_worker = find_node(root))
+              (not (node_to_worker = find_node(root)))
             #
             # maxed out or no nodes available -- wait for results
             #
