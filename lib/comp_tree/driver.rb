@@ -71,6 +71,8 @@ module CompTree
       children.each { |child|
         child.parents << parent
       }
+      
+      parent
     end
 
     #
