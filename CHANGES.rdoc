@@ -1,6 +1,11 @@
 
 = CompTree ChangeLog
 
+== Version 0.7.6
+
+* Driver#define returns created node
+* Raise CompTree::ArgumentError for nonexistent node or threads < 1
+
 == Version 0.7.5
 
 * fix manual install
