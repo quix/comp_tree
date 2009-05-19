@@ -57,12 +57,28 @@ class TestException < Test::Unit::TestCase
   def test_num_threads
     CompTree.build do |driver|
       driver.define(:root) { }
-      assert_raises(ArgumentError) { driver.compute(:root, 0) }
-      assert_raises(ArgumentError) { driver.compute(:root, :threads => 0) }
-      assert_raises(ArgumentError) { driver.compute(:root, -1) }
-      assert_raises(ArgumentError) { driver.compute(:root, :threads => -1) }
-      assert_raises(ArgumentError) { driver.compute(:root, -11) }
-      assert_raises(ArgumentError) { driver.compute(:root, :threads => -11) }
+      error = CompTree::ArgumentError
+      assert_raises(error) { driver.compute(:root, 0) }
+      assert_raises(error) { driver.compute(:root, :threads => 0) }
+      assert_raises(error) { driver.compute(:root, -1) }
+      assert_raises(error) { driver.compute(:root, :threads => -1) }
+      assert_raises(error) { driver.compute(:root, -11) }
+      assert_raises(error) { driver.compute(:root, :threads => -11) }
+    end
+  end
+
+  def test_invalid_node
+    CompTree.build do |driver|
+      driver.define(:root) { }
+      assert_nothing_raised {
+        driver.compute(:root, 33)
+      }
+      assert_raises(CompTree::ArgumentError) {
+        driver.compute(:a, 33)
+      }
+      assert_raises(CompTree::ArgumentError) {
+        driver.compute(nil, 33)
+      }
     end
   end
 end

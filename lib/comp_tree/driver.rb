@@ -120,9 +120,13 @@ module CompTree
     def compute(name, opts)
       threads = (opts.is_a?(Hash) ? opts[:threads] : opts).to_i
       unless threads > 0
-        raise ArgumentError, "number of threads must be greater than zero"
+        raise CompTree::ArgumentError,
+        "number of threads must be greater than zero"
       end
-      root = @nodes[name]
+      root = @nodes[name] || (
+        raise CompTree::ArgumentError,
+        "no such node named `#{name.inspect}'"
+      )
       if root.computed
         root.result
       elsif threads == 1

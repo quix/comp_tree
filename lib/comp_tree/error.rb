@@ -13,4 +13,7 @@ module CompTree
   
   # Encountered a node without a function during a computation.
   class NoFunctionError < Error ; end
+
+  # Missing or malformed method arguments
+  class ArgumentError < Error ; end
 end
