@@ -101,7 +101,7 @@ module CompTree
       begin
         unless @function
           raise NoFunctionError,
-          "No function was defined for node '#{@name.inspect}'"
+          "no function was defined for node `#{@name.inspect}'"
         end
         @result = @function.call(*@children_results)
         @computed = true

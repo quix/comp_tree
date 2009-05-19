@@ -52,16 +52,18 @@ module CompTree
       # retrieve or create parent and children
       #
 
-      parent = @nodes[name] || (@nodes[name] = @node_class.new(name))
+      parent = @nodes.fetch(name) {
+        @nodes[name] = @node_class.new(name)
+      }
       if parent.function
-        raise RedefinitionError, "Node `#{parent.name.inspect}' redefined."
+        raise RedefinitionError, "node `#{parent.name.inspect}' redefined"
       end
       parent.function = block
       
       children = child_names.map { |child_name|
-        @nodes[child_name] || (
+        @nodes.fetch(child_name) {
           @nodes[child_name] = @node_class.new(child_name)
-        )
+        }
       }
 
       #
@@ -123,10 +125,10 @@ module CompTree
         raise CompTree::ArgumentError,
         "number of threads must be greater than zero"
       end
-      root = @nodes[name] || (
+      root = @nodes.fetch(name) {
         raise CompTree::ArgumentError,
         "no such node named `#{name.inspect}'"
-      )
+      }
       if root.computed
         root.result
       elsif threads == 1
