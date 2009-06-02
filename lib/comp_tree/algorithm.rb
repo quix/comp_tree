@@ -76,9 +76,9 @@ module CompTree
         # locked or children not computed; recurse to children
         #
         node.each_child { |child|
-          found = find_node(child) and (
+          if found = find_node(child)
             return found
-          )
+          end
         }
         nil
       end
