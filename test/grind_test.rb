@@ -55,22 +55,21 @@ class TestGrind < Test::Unit::TestCase
     args[:level_range].each { |num_levels|
       args[:children_range].each { |num_children|
         separator
-        #bench_output {%{num_levels}}
-        #bench_output {%{num_children}}
+        bench_output {%{num_levels}}
+        bench_output {%{num_children}}
         driver = generate_comp_tree(
           num_levels,
           num_children,
           args[:drain_iterations])
         args[:thread_range].each { |threads|
-         #bench_output {%{threads}}
+         bench_output {%{threads}}
           2.times {
             driver.reset(ROOT)
-            #result = nil
-            #bench = Benchmark.measure {
-            #  result = driver.compute(ROOT, threads)
-            #}
-            result = driver.compute(ROOT, threads)
-            #bench_output bench
+            result = nil
+            bench = Benchmark.measure {
+              result = driver.compute(ROOT, threads)
+            }
+            bench_output bench
             assert_equal(result, RETURN_FLAG)
           }
         }

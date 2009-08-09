@@ -17,10 +17,9 @@ class TestDrain < Test::Unit::TestCase
       driver.define(:height, :border, &func)
       driver.define(:border, &func)
       driver.define(:offset, &func)
-      #bench_output "number of threads: #{threads}"
-      #bench = Benchmark.measure { driver.compute(:area, threads) }
-      driver.compute(:area, threads)
-      #bench_output bench
+      bench_output "number of threads: #{threads}"
+      bench = Benchmark.measure { driver.compute(:area, threads) }
+      bench_output bench
     }
   end
 

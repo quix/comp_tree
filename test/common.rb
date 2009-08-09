@@ -2,10 +2,11 @@ $LOAD_PATH.unshift File.dirname(__FILE__) + '/../lib'
 
 require 'test/unit'
 require 'comp_tree'
-#require 'benchmark'
 
 module TestCommon
   if ARGV.include?("--bench")
+    require 'benchmark'
+
     def separator
       puts
       puts "-"*60
@@ -23,7 +24,18 @@ module TestCommon
       end
     end
   else
-    def separator() end
-    def bench_output(desc = nil, stream = STDOUT, &block) end
+    module Benchmark
+      class << self
+        def measure
+          yield
+        end
+      end
+    end
+
+    def separator()
+    end
+
+    def bench_output(desc = nil, stream = STDOUT, &block)
+    end
   end
 end
