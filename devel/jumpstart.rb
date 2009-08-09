@@ -24,27 +24,12 @@ class Jumpstart
     end
 
     attribute :version do
-      const = "VERSION"
-      begin
-        require name
-        if mod = Object.const_get(to_camel_case(name))
-          candidates = mod.constants.grep(%r!#{const}!)
-          result = (
-            if candidates.size == 1
-              candidates.first
-            elsif candidates.include? const
-              const
-            else
-              raise
-            end
-          )
-          mod.const_get(result)
-        else
-          raise
-        end
-      rescue Exception
-        "0.0.0"
-      end
+      require name
+      mod = to_camel_case(name)
+      
+      (full_const_get("#{mod}::VERSION") rescue nil) ||
+      (full_const_get("#{mod}::#{mod}Private::VERSION") rescue nil) ||
+      "0.0.0"
     end
 
     attribute :rubyforge_name do
@@ -72,7 +57,7 @@ class Jumpstart
     end
 
     attribute :test_files do
-      Dir["test/test_*.rb"]
+      (Dir["test/test_*.rb"] + Dir["test/*_test.rb"]).uniq
     end
 
     attribute :rcov_dir do
@@ -485,13 +470,13 @@ class Jumpstart
     task :comments do
       file = "comments.txt"
       write_file(file) {
-        Array.new.tap { |result|
-          (["Rakefile"] + Dir["**/*.{rb,rake}"]).each { |file|
-            File.read(file).scan(%r!\#[^\{].*$!) { |match|
-              result << match
-            }
+        result = Array.new
+        (["Rakefile"] + Dir["**/*.{rb,rake}"]).each { |file|
+          File.read(file).scan(%r!\#[^\{].*$!) { |match|
+            result << match
           }
-        }.join("\n")
+        }
+        result.join("\n")
       }
       CLEAN.include file
     end
@@ -564,9 +549,9 @@ class Jumpstart
 
     task :finish_release do
       gem_md5, tgz_md5 = [gem, tgz].map { |file|
-        "#{file}.md5".tap { |md5|
-          sh("md5sum #{file} > #{md5}")
-        }
+        md5 = "#{file}.md5"
+        sh("md5sum #{file} > #{md5}")
+        md5
       }
 
       rubyforge("add_release", gem)
@@ -592,11 +577,11 @@ class Jumpstart
   end
 
   def write_file(file)
-    yield.tap { |contents|
-      File.open(file, "wb") { |out|
-        out.print(contents)
-      }
+    contents = yield
+    File.open(file, "wb") { |out|
+      out.print(contents)
     }
+    contents
   end
 
   def run_ruby_on_each(*files)
@@ -609,25 +594,94 @@ class Jumpstart
     str.split('_').map { |t| t.capitalize }.join
   end
 
+  def full_const_get(string)
+    string.split("::").inject(Object) { |acc, name|
+      if acc.constants.include?(name)
+        acc.const_get(name)
+      else
+        raise NameError, "uninitialized constant #{string}"
+      end
+    }
+  end
+
   class << self
     def replace_file(file)
       old_contents = File.read(file)
-      yield(old_contents).tap { |new_contents|
-        if old_contents != new_contents
-          File.open(file, "wb") { |output|
-            output.print(new_contents)
-          }
-        end
-      }
+      new_contents = yield(old_contents)
+      if old_contents != new_contents
+        File.open(file, "wb") { |output|
+          output.print(new_contents)
+        }
+      end
+      new_contents
     end
-  end
-end
 
-unless respond_to? :tap
-  class Object
-    def tap
-      yield self
-      self
+    def run_doc_section(file, section)
+      require 'tempfile'
+
+      body, expected = (
+        contents = File.read(file)
+        re = %r!^=+[ \t]*#{section}.*?^(.*?)^(\S.*?)\s*?^(.*?)^\S!m
+        if match = contents.match(re)
+          if match[2] == "output:"
+            [match[1], match[3]]
+          else
+            [match[1], match[1].scan(%r!\# => (.*?)\n!).flatten.join("\n")]
+          end
+        else
+          raise "couldn't find section `#{section}' of `#{file}'"
+        end
+      )
+
+      lib = File.expand_path(File.dirname(__FILE__) + "/../lib")
+      header = %{
+        $LOAD_PATH.unshift "#{lib}"
+        require 'rubygems'
+      }
+      code = header + body
+
+      actual = nil
+      Tempfile.open("run-ruby-#{file}") { |temp_file|
+        temp_file.print(code)
+        temp_file.close
+        result = `"#{::Jumpstart::Ruby::EXECUTABLE}" "#{temp_file.path}"`
+        unless $?.exitstatus == 0
+          raise "failed to run ruby"
+        end
+        actual = result.chomp
+      }
+
+      if block_given?
+        yield expected, actual
+      else
+        [expected, actual]
+      end
+    end
+
+    def doc_to_spec(file, *sections, &block)
+      js = self
+      describe file do
+        sections.each { |section|
+          describe section do
+            it "should run as claimed" do
+              expected, actual = js.run_doc_section(file, section, &block)
+              actual.should == expected
+            end
+          end
+        }
+      end
+    end
+
+    def doc_to_test(file, *sections, &block)
+      js = self
+      Class.new(Test::Unit::TestCase) {
+        sections.each { |section|
+          define_method "test_#{file}_#{section}" do
+            expected, actual = js.run_doc_section(file, section, &block)
+            assert_equal expected, actual
+          end
+        }
+      }
     end
   end
 end
