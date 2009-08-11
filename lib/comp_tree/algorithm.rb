@@ -1,60 +1,61 @@
 
-require 'comp_tree/queue'
-
 module CompTree
   module Algorithm
     module_function
 
     def compute_parallel(root, num_threads)
-      to_workers = Queue.new
       from_workers = Queue.new
-      final_node = nil
+      to_workers = Queue.new
 
       workers = (1..num_threads).map {
         Thread.new {
-          until (node = to_workers.pop) == nil
-            node.compute
-            from_workers.push(node)
-          end
+          worker_loop(from_workers, to_workers)
         }
       }
 
-      Thread.new {
-        node_to_worker = nil
-        node_from_worker = nil
-        num_working = 0
-        while true
-          if num_working == num_threads or !(node_to_worker = find_node(root))
-            #
-            # maxed out or no nodes available -- wait for results
-            #
-            node_from_worker = from_workers.pop
-            node_from_worker.unlock
-            num_working -= 1
-            if node_from_worker == root or
-                node_from_worker.computed.is_a? Exception
-              final_node = node_from_worker
-              break
-            end
-          elsif node_to_worker
-            #
-            # found a node
-            #
-            node_to_worker.lock
-            to_workers.push(node_to_worker)
-            num_working += 1
-            node_to_worker = nil
-          end
-        end
-        num_threads.times { to_workers.push(nil) }
-      }.join
+      node = Thread.new {
+        master_loop(root, num_threads, from_workers, to_workers)
+      }.value
 
+      num_threads.times { to_workers.push(nil) }
       workers.each { |t| t.join }
       
-      if final_node.computed.is_a? Exception
-        raise final_node.computed
+      if node.computed.is_a? Exception
+        raise node.computed
       else
-        final_node.result
+        node.result
+      end
+    end
+
+    def worker_loop(from_workers, to_workers)
+      while node = to_workers.pop
+        node.compute
+        from_workers.push(node)
+      end
+    end
+
+    def master_loop(root, num_threads, from_workers, to_workers)
+      num_working = 0
+      node = nil
+      while true
+        if num_working == num_threads or !(node = find_node(root))
+          #
+          # maxed out or no nodes available -- wait for results
+          #
+          node = from_workers.pop
+          node.unlock
+          num_working -= 1
+          if node == root or node.computed.is_a? Exception
+            break node
+          end
+        else
+          #
+          # found a node
+          #
+          num_working += 1
+          node.lock
+          to_workers.push(node)
+        end
       end
     end
 

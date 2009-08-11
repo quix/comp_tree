@@ -1,26 +1,15 @@
 
-require 'comp_tree/algorithm'
-require 'comp_tree/node'
-require 'comp_tree/error'
-
 module CompTree
   #
   # Driver is the main interface to the computation tree.  It is
   # responsible for defining nodes and running computations.
   #
   class Driver
-    include Algorithm
-
     #
     # See CompTree.build
     #
-    def initialize(opts = nil)  #:nodoc:
-      @node_class =
-        if opts and opts[:node_class]
-          opts[:node_class]
-        else
-          Node
-        end
+    def initialize(opts = {})  #:nodoc:
+      @node_class = opts[:node_class] || Node
       @nodes = Hash.new
     end
 
@@ -49,16 +38,16 @@ module CompTree
     #
     def define(name, *child_names, &block)
       #
-      # retrieve or create parent and children
+      # retrieve or create node and children
       #
 
-      parent = @nodes.fetch(name) {
+      node = @nodes.fetch(name) {
         @nodes[name] = @node_class.new(name)
       }
-      if parent.function
-        raise RedefinitionError, "node `#{parent.name.inspect}' redefined"
+      if node.function
+        raise RedefinitionError.new(node.name)
       end
-      parent.function = block
+      node.function = block
       
       children = child_names.map { |child_name|
         @nodes.fetch(child_name) {
@@ -69,12 +58,12 @@ module CompTree
       #
       # link
       #
-      parent.children = children
+      node.children = children
       children.each { |child|
-        child.parents << parent
+        child.parents << node
       }
       
-      parent
+      node
     end
 
     #
@@ -107,34 +96,36 @@ module CompTree
     end
 
     #
-    # :call-seq:
-    #   compute(name, threads)
-    #   compute(name, :threads => threads)
-    #
     # _name_ -- unique node identifier (for example a symbol).
     #
-    # _threads_ -- number of threads.
+    # _num_threads_ -- number of threads.
     #
-    # Compute this node, returning its result.
+    # Compute the tree below _name_ and return the result.
     #
-    # Any uncomputed children are computed first.
+    # If a node's computation raises an exception, the exception will
+    # be transferred to the caller of compute().  The tree will be
+    # left in a dirty state so that individual nodes may be examined.
+    # It is your responsibility to call reset() before attempting the
+    # computation again, otherwise the result will be undefined.
     #
-    def compute(name, opts)
-      threads = (opts.is_a?(Hash) ? opts[:threads] : opts).to_i
-      unless threads > 0
-        raise CompTree::ArgumentError,
-        "number of threads must be greater than zero"
+    def compute(name, num_threads)
+      begin
+        num_threads = num_threads.to_int
+      rescue NoMethodError
+        raise TypeError, "can't convert #{num_threads.class} into Integer"
+      end
+      unless num_threads > 0
+        raise RangeError, "number of threads must be greater than zero"
       end
       root = @nodes.fetch(name) {
-        raise CompTree::ArgumentError,
-        "no such node named `#{name.inspect}'"
+        raise NoNodeError.new(name)
       }
       if root.computed
         root.result
-      elsif threads == 1
-        root.result = root.compute_now
+      elsif num_threads == 1
+        root.compute_now
       else
-        compute_parallel(root, threads)
+        Algorithm.compute_parallel(root, num_threads)
       end
     end
   end

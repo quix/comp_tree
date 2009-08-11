@@ -44,7 +44,7 @@ class TestBasic < Test::Unit::TestCase
     (1..20).each { |threads|
       CompTree.build do |driver|
         driver.define(:a) { 33 }
-        assert_equal(33, driver.compute(:a, :threads => threads))
+        assert_equal(33, driver.compute(:a, threads))
       end
     }
   end
@@ -55,12 +55,14 @@ class TestBasic < Test::Unit::TestCase
         driver.define {
         }
       }
-      assert_raise(CompTree::RedefinitionError) {
+      error = assert_raise(CompTree::RedefinitionError) {
         driver.define(:a) {
         }
         driver.define(:a) {
         }
       }
+      assert_equal "attempt to redefine node `:a'", error.message
+      assert_equal :a, error.node_name
     }
   end
 

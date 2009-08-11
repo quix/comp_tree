@@ -14,17 +14,15 @@ module CompTree
     def push(object)
       Thread.critical = true
       @queue.push object
-      begin
-        if thread = @waiting.shift
-          thread.wakeup
-        end
-      ensure
-        Thread.critical = false
+      if thread = @waiting.shift
+        thread.wakeup
       end
+    ensure
+      Thread.critical = false
     end
 
     def pop
-      while (Thread.critical = true; @queue.empty?)
+      while (Thread.critical = true ; @queue.empty?)
         @waiting.push Thread.current
         Thread.stop
       end

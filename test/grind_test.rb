@@ -32,7 +32,7 @@ class TestGrind < Test::Unit::TestCase
         RETURN_FLAG
       }
       build_tree = lambda { |parent, children, level|
-        #trace "building #{parent} --> #{children.join(' ')}"
+        #puts "building #{parent} --> #{children.join(' ')}"
         
         driver.define(parent, *children, &drain)
 

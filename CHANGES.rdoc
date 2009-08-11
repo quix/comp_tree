@@ -1,6 +1,12 @@
 
 = CompTree ChangeLog
 
+== Version 1.0.0
+
+* better errors and error handling
+* single-threaded compute() now checks exceptions
+* compute(:root, :threads => 3) option deprecated; use compute(:root, 3)
+
 == Version 0.7.6
 
 * Driver#define returns created node

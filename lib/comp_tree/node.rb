@@ -1,24 +1,24 @@
 
-require 'thread'
-
 module CompTree
   #
   # Base class for nodes in the computation tree.
   # 
   class Node
-    attr_reader :name                   #:nodoc:
+    attr_reader :name
 
-    attr_accessor :parents              #:nodoc:
-    attr_accessor :children             #:nodoc:
-    attr_accessor :function             #:nodoc:
-    attr_accessor :result               #:nodoc:
-    attr_accessor :computed             #:nodoc:
-    attr_accessor :lock_level           #:nodoc:
+    attr_accessor(
+      :parents,
+      :children,
+      :function,
+      :result,
+      :computed,
+      :lock_level
+    )
 
     #
     # Create a node
     #
-    def initialize(name) #:nodoc:
+    def initialize(name)
       @name = name
       @parents = []
       @children = []
@@ -29,7 +29,7 @@ module CompTree
     #
     # Reset the computation for this node.
     #
-    def reset_self #:nodoc:
+    def reset_self
       @result = nil
       @computed = nil
       @lock_level = 0
@@ -39,27 +39,27 @@ module CompTree
     #
     # Reset the computation for this node and all children.
     #
-    def reset #:nodoc:
+    def reset
       each_downward { |node|
         node.reset_self
       }
     end
 
-    def each_downward(&block) #:nodoc:
+    def each_downward(&block)
       block.call(self)
       @children.each { |child|
         child.each_downward(&block)
       }
     end
 
-    def each_upward(&block) #:nodoc:
+    def each_upward(&block)
       block.call(self)
       @parents.each { |parent|
         parent.each_upward(&block)
       }
     end
 
-    def each_child #:nodoc:
+    def each_child
       @children.each { |child|
         yield(child)
       }
@@ -69,20 +69,26 @@ module CompTree
     # Force all children and self to be computed; no locking required.
     # Intended to be used outside of parallel computations.
     #
-    def compute_now #:nodoc:
-      unless @children_results
-        @children_results = @children.map { |child|
-          child.compute_now
-        }
+    def compute_now
+      unless @computed
+        unless @children_results
+          @children_results = @children.map { |child|
+            child.compute_now
+          }
+        end
+        compute
+        if @computed.is_a? Exception
+          raise @computed
+        end
       end
-      compute
+      @result
     end
     
     #
     # If all children have been computed, return their results;
     # otherwise return nil.
     #
-    def children_results #:nodoc:
+    def children_results
       @children_results or (
         @children_results = @children.map { |child|
           unless child.computed
@@ -97,11 +103,10 @@ module CompTree
     # Compute this node; children must be computed and lock must be
     # already acquired.
     #
-    def compute #:nodoc:
+    def compute
       begin
         unless @function
-          raise NoFunctionError,
-          "no function was defined for node `#{@name.inspect}'"
+          raise NoFunctionError.new(@name)
         end
         @result = @function.call(*@children_results)
         @computed = true
@@ -115,13 +120,13 @@ module CompTree
       @lock_level != 0
     end
 
-    def lock #:nodoc:
+    def lock
       each_upward { |node|
         node.lock_level += 1
       }
     end
 
-    def unlock #:nodoc:
+    def unlock
       each_upward { |node|
         node.lock_level -= 1
       }

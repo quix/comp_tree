@@ -3,8 +3,7 @@
 
 == Summary
 
-Automatic parallelism and lazy evaluation via pure functional
-programming.
+A simple framework for parallelizing computations.
 
 == Synopsis
   
@@ -33,7 +32,7 @@ programming.
     }
     
     # Compute the area using four parallel threads.
-    puts driver.compute(:area, :threads => 4)
+    puts driver.compute(:area, 4)
     # => 63
 
     # We've done this computation.
@@ -51,14 +50,15 @@ Or for the (non-gem) .tgz package,
 
 == Description
 
-CompTree is a framework for parallelizing interrelated computations.
+CompTree provides a structure for parallelism using concepts from pure
+functional programming.
 
-The user should have a basic understanding of <em>functional
-programming</em> (see for example
-http://en.wikipedia.org/wiki/Functional_programming) and the meaning
-of <em>side effects</em>.
+The user should have a basic understanding of functional programming
+(see for example http://en.wikipedia.org/wiki/Functional_programming)
+and the meaning of <em>side effects</em>.
 
-Every function you define must explicitly depend on the data it uses.
+Every pure function you define must explicitly depend on the data it
+uses.
 
   #
   # BAD example: depending on state -- offset not listed as a parameter
@@ -68,8 +68,7 @@ Every function you define must explicitly depend on the data it uses.
   }
 
 Unless <em>offset</em> is really a constant, the result of
-<tt>driver.compute(:area, :threads => n)</tt> is not well-defined
-for _n_ > 1.
+<tt>driver.compute(:area, n)</tt> is not well-defined for _n_ > 1.
 
 Just as depending on some changeable state is bad, it is likewise bad
 to affect a state (to produce a <em>side effect</em>).
@@ -83,12 +82,12 @@ to affect a state (to produce a <em>side effect</em>).
   }
 
 Given a tree where nodes are modifying _accumulator_, the end state of
-_accumulator_ is not well-defined.  Moreover if _accumulator_ is not
-thread-safe, the result will be even worse.
+_accumulator_ is not well-defined, even if _accumulator_ is a
+thread-safe object.
 
 Note however it is OK affect a state as long as <em>no other function
 depends on that state</em>.  This is the principle under which
-+comp_tree+ parallelizes Rake tasks (http://drake.rubyforge.org).
+CompTree parallelizes Rake tasks (http://drake.rubyforge.org).
 
 == Links
 
