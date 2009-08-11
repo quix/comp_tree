@@ -15,7 +15,9 @@ module CompTree
       Thread.critical = true
       @queue.push object
       begin
-        thread = @waiting.shift and thread.wakeup
+        if thread = @waiting.shift
+          thread.wakeup
+        end
       ensure
         Thread.critical = false
       end
