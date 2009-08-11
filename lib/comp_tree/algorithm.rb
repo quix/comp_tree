@@ -14,7 +14,7 @@ module CompTree
         Thread.new {
           until (node = to_workers.pop) == nil
             node.compute
-            from_workers.push node
+            from_workers.push(node)
           end
         }
       }
@@ -24,8 +24,7 @@ module CompTree
         node_from_worker = nil
         num_working = 0
         while true
-          if num_working == num_threads or
-              (not (node_to_worker = find_node(root)))
+          if num_working == num_threads or !(node_to_worker = find_node(root))
             #
             # maxed out or no nodes available -- wait for results
             #
@@ -41,12 +40,13 @@ module CompTree
             #
             # found a node
             #
-            to_workers.push node_to_worker
+            node_to_worker.lock
+            to_workers.push(node_to_worker)
             num_working += 1
             node_to_worker = nil
           end
         end
-        num_threads.times { to_workers.push nil }
+        num_threads.times { to_workers.push(nil) }
       }.join
 
       workers.each { |t| t.join }
@@ -67,9 +67,8 @@ module CompTree
       elsif not node.locked? and node.children_results
         #
         # Node is not computed, not locked, and its children are
-        # computed; Ready to compute.
+        # computed; ready to compute.
         #
-        node.lock
         node
       else
         #
