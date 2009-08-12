@@ -1,6 +1,5 @@
-require File.dirname(__FILE__) + "/common"
+require File.dirname(__FILE__) + "/comp_tree_test_base"
 
-$LOAD_PATH.unshift File.dirname(__FILE__) + "/../devel"
 require "jumpstart"
 
 Jumpstart.doc_to_test("README.rdoc", "Synopsis")

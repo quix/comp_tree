@@ -1,9 +1,10 @@
 $LOAD_PATH.unshift File.dirname(__FILE__) + '/../lib'
+$LOAD_PATH.unshift File.dirname(__FILE__) + '/../devel'
 
 require 'test/unit'
 require 'comp_tree'
 
-module TestCommon
+module TestBase
   if ARGV.include?("--bench")
     require 'benchmark'
 

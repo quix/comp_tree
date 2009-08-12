@@ -1,7 +1,7 @@
-require File.dirname(__FILE__) + '/common'
+require File.dirname(__FILE__) + '/comp_tree_test_base'
 
 class TestGrind < Test::Unit::TestCase
-  include TestCommon
+  include TestBase
 
   GENERATOR_DATA = {
     :level_range => 1..5,

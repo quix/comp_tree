@@ -1,7 +1,7 @@
-require File.dirname(__FILE__) + '/common'
+require File.dirname(__FILE__) + '/comp_tree_test_base'
 
 class TestDrain < Test::Unit::TestCase
-  include TestCommon
+  include TestBase
 
   def drain
     500000.times { }

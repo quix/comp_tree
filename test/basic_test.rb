@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/common'
+require File.dirname(__FILE__) + '/comp_tree_test_base'
 
 class TestBasic < Test::Unit::TestCase
   def test_define

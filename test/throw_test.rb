@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/common'
+require File.dirname(__FILE__) + '/comp_tree_test_base'
 
 class TestThrow < Test::Unit::TestCase
   EXPECTED = RUBY_VERSION >= "1.9.0" ? ArgumentError : ThreadError

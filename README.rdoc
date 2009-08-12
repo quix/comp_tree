@@ -50,8 +50,8 @@ Or for the (non-gem) .tgz package,
 
 == Description
 
-CompTree provides a structure for parallelism using concepts from pure
-functional programming.
+CompTree is parallel computation tree structure based upon concepts
+from pure functional programming.
 
 The user should have a basic understanding of functional programming
 (see for example http://en.wikipedia.org/wiki/Functional_programming)
