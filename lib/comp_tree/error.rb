@@ -4,21 +4,17 @@ module CompTree
   # Base class for CompTree errors.
   #
   class Error < StandardError
-    def inspect  #:nodoc:
-      "#<#{self.class.name}: #{message}>"
-    end
   end
 
   #
   # Base class for node errors.
   #
   class NodeError < Error
-    attr_reader :node_name
-    
     def initialize(node_name)  #:nodoc:
-      super()
       @node_name = node_name
+      super(custom_message)
     end
+    attr_reader :node_name
   end
     
   #
@@ -28,7 +24,7 @@ module CompTree
   #   driver.nodes[name].function = lambda { ... }
   #
   class RedefinitionError < NodeError
-    def message  #:nodoc:
+    def custom_message  #:nodoc:
       "attempt to redefine node `#{node_name.inspect}'"
     end
   end
@@ -37,7 +33,7 @@ module CompTree
   # Encountered a node without a function during a computation.
   #
   class NoFunctionError < NodeError
-    def message  #:nodoc:
+    def custom_message  #:nodoc:
       "no function was defined for node `#{node_name.inspect}'"
     end
   end
@@ -46,7 +42,7 @@ module CompTree
   # Requested node does not exist.
   #
   class NoNodeError < NodeError
-    def message  #:nodoc:
+    def custom_message  #:nodoc:
       "no node named `#{node_name.inspect}'"
     end
   end
