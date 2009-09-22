@@ -13,9 +13,7 @@ module CompTree
         }
       }
 
-      node = Thread.new {
-        master_loop(root, num_threads, from_workers, to_workers)
-      }.value
+      node = master_loop(root, num_threads, from_workers, to_workers)
 
       num_threads.times { to_workers.push(nil) }
       workers.each { |t| t.join }
