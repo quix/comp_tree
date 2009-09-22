@@ -1,6 +1,10 @@
 
 = CompTree ChangeLog
 
+== Version 1.0.1
+
+* minor optimization to the main algorithm
+
 == Version 1.0.0
 
 * better errors and error handling
