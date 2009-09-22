@@ -3,7 +3,7 @@
 
 == Summary
 
-A simple framework for parallelizing computations.
+A simple framework for automatic parallelism.
 
 == Synopsis
   
@@ -50,15 +50,14 @@ Or for the (non-gem) .tgz package,
 
 == Description
 
-CompTree is parallel computation tree structure based upon concepts
+CompTree is a parallel computation tree structure based upon concepts
 from pure functional programming.
 
 The user should have a basic understanding of functional programming
 (see for example http://en.wikipedia.org/wiki/Functional_programming)
 and the meaning of <em>side effects</em>.
 
-Every pure function you define must explicitly depend on the data it
-uses.
+Every function you define must explicitly depend on the data it uses.
 
   #
   # BAD example: depending on state -- offset not listed as a parameter
