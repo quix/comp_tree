@@ -53,6 +53,11 @@ Or for the (non-gem) .tgz package,
 CompTree is a parallel computation tree structure based upon concepts
 from pure functional programming.
 
+CompTree has been tested on MRI 1.8.6, 1.8.7, 1.9.1, 1.9.2, and
+jruby-1.4.
+
+== Background
+
 The user should have a basic understanding of functional programming
 (see for example http://en.wikipedia.org/wiki/Functional_programming)
 and the meaning of <em>side effects</em>.
