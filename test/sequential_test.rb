@@ -1,6 +1,6 @@
-require File.dirname(__FILE__) + '/comp_tree_test_base'
+require File.expand_path(File.dirname(__FILE__)) + '/comp_tree_test_base'
 
-class TestSequential < Test::Unit::TestCase
+class SequentialTest < CompTreeTest
   def test_sequential
     (1..50).each { |num_threads|
       [1, 2, 3, 20, 50].each { |num_nodes|

@@ -1,6 +1,6 @@
-require File.dirname(__FILE__) + '/comp_tree_test_base'
+require File.expand_path(File.dirname(__FILE__)) + '/comp_tree_test_base'
 
-class TestCircular < Test::Unit::TestCase
+class CircularTest < CompTreeTest
   def test_circular
     CompTree.build { |driver|
       driver.define(:area, :width, :height, :offset) { |width, height, offset|

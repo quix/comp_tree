@@ -1,10 +1,11 @@
 $LOAD_PATH.unshift File.dirname(__FILE__) + '/../lib'
 $LOAD_PATH.unshift File.dirname(__FILE__) + '/../devel'
 
-require 'test/unit'
+require 'minitest/unit'
+require 'minitest/autorun' unless defined? Rake
 require 'comp_tree'
 
-module TestBase
+class CompTreeTest < MiniTest::Unit::TestCase
   if ARGV.include?("--bench")
     require 'benchmark'
 

@@ -1,6 +1,6 @@
-require File.dirname(__FILE__) + '/comp_tree_test_base'
+require File.expand_path(File.dirname(__FILE__)) + '/comp_tree_test_base'
 
-class TestFlood < Test::Unit::TestCase
+class FloodTest < CompTreeTest
   def test_thread_flood
     (1..200).each { |num_threads|
       CompTree.build { |driver|

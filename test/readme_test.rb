@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + "/comp_tree_test_base"
+require File.expand_path(File.dirname(__FILE__)) + '/comp_tree_test_base'
 
 require "jumpstart"
 

@@ -1,6 +1,6 @@
-require File.dirname(__FILE__) + '/comp_tree_test_base'
+require File.expand_path(File.dirname(__FILE__)) + '/comp_tree_test_base'
 
-class TestException < Test::Unit::TestCase
+class ExceptionTest < CompTreeTest
   def test_exception
     test_error = Class.new StandardError
     [true, false].each { |define_all|
@@ -79,9 +79,7 @@ class TestException < Test::Unit::TestCase
     (1..20).each { |num_threads|
       CompTree.build do |driver|
         driver.define(:root) { }
-        assert_nothing_raised {
-          driver.compute(:root, num_threads)
-        }
+        driver.compute(:root, num_threads)
 
         error = assert_raises(CompTree::NoNodeError) {
           driver.compute(:a, num_threads)

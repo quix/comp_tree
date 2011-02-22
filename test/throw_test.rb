@@ -1,6 +1,6 @@
-require File.dirname(__FILE__) + '/comp_tree_test_base'
+require File.expand_path(File.dirname(__FILE__)) + '/comp_tree_test_base'
 
-class TestThrow < Test::Unit::TestCase
+class ThrowTest < CompTreeTest
   EXPECTED = RUBY_VERSION >= "1.9.0" ? ArgumentError : ThreadError
 
   def test_throw

@@ -1,6 +1,6 @@
-require File.dirname(__FILE__) + '/comp_tree_test_base'
+require File.expand_path(File.dirname(__FILE__)) + '/comp_tree_test_base'
 
-class TestBasic < Test::Unit::TestCase
+class BasicTest < CompTreeTest
   def test_define
     (1..20).each { |threads|
       CompTree.build { |driver|
@@ -51,11 +51,11 @@ class TestBasic < Test::Unit::TestCase
 
   def test_malformed
     CompTree.build { |driver|
-      assert_raise(ArgumentError) {
+      assert_raises(ArgumentError) {
         driver.define {
         }
       }
-      error = assert_raise(CompTree::RedefinitionError) {
+      error = assert_raises(CompTree::RedefinitionError) {
         driver.define(:a) {
         }
         driver.define(:a) {
@@ -89,7 +89,7 @@ class TestBasic < Test::Unit::TestCase
         7
       }
       
-      assert_raise(test_error) {
+      assert_raises(test_error) {
         driver.compute(:area, 6)
       }
     }
@@ -142,7 +142,7 @@ class TestBasic < Test::Unit::TestCase
   def test_node_name_equality_comparison
     CompTree.build { |driver|
       driver.define("hello") { }
-      assert_raise(CompTree::RedefinitionError) {
+      assert_raises(CompTree::RedefinitionError) {
         driver.define("hello") { }
       }
     }

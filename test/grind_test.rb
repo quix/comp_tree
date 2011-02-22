@@ -1,8 +1,6 @@
-require File.dirname(__FILE__) + '/comp_tree_test_base'
+require File.expand_path(File.dirname(__FILE__)) + '/comp_tree_test_base'
 
-class TestGrind < Test::Unit::TestCase
-  include TestBase
-
+class GrindTest < CompTreeTest
   GENERATOR_DATA = {
     :level_range => 1..5,
     :children_range => 1..5,

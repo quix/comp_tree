@@ -1,8 +1,6 @@
-require File.dirname(__FILE__) + '/comp_tree_test_base'
+require File.expand_path(File.dirname(__FILE__)) + '/comp_tree_test_base'
 
-class TestDrain < Test::Unit::TestCase
-  include TestBase
-
+class DrainTest < CompTreeTest
   def drain
     500000.times { }
   end
