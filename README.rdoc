@@ -44,9 +44,9 @@ A simple framework for automatic parallelism.
 
   % gem install comp_tree
 
-Or for the (non-gem) .tgz package,
+Or from the (non-gem) .tgz package,
 
-  % ruby install.rb [--uninstall]
+  % rake install
 
 == Description
 
@@ -55,6 +55,13 @@ from pure functional programming.
 
 CompTree has been tested on MRI 1.8.6, 1.8.7, 1.9.1, 1.9.2, and
 jruby-1.4.
+
+== Links
+
+* Home: http://quix.github.com/comp_tree
+* Feature Requests, Bug Reports: http://github.com/quix/comp_tree/issues
+* Manual Download: http://github.com/quix/comp_tree/archives/master
+* Repository: http://github.com/quix/comp_tree
 
 == Background
 
@@ -92,13 +99,6 @@ thread-safe object.
 Note however it is OK affect a state as long as <em>no other function
 depends on that state</em>.  This is the principle under which
 CompTree parallelizes Rake tasks (http://drake.rubyforge.org).
-
-== Links
-
-* Documentation: http://comptree.rubyforge.org
-* Download: http://rubyforge.org/frs/?group_id=6917
-* Rubyforge home: http://rubyforge.org/projects/comptree
-* Repository: http://github.com/quix/comp_tree
 
 == Author
 
