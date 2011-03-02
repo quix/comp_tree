@@ -1,6 +1,10 @@
 
 = comp_tree Changes
 
+== Version 1.1.1
+
+* fix documentation
+
 == Version 1.1.0
 
 * lazily spawn threads as needed -- no longer pre-allocates possibly
