@@ -31,7 +31,7 @@ A simple framework for automatic parallelism.
       2
     }
     
-    # Compute the area using four parallel threads.
+    # Compute the area using up to four parallel threads.
     puts driver.compute(:area, 4)
     # => 63
 
@@ -44,17 +44,16 @@ A simple framework for automatic parallelism.
 
   % gem install comp_tree
 
-Or from the (non-gem) .tgz package,
-
-  % rake install
+Or from inside an unpacked .tgz download, <code>rake install</code> /
+<code>rake uninstall</code>.
 
 == Description
 
 CompTree is a parallel computation tree structure based upon concepts
 from pure functional programming.
 
-CompTree has been tested on MRI 1.8.6, 1.8.7, 1.9.1, 1.9.2, and
-jruby-1.4.
+CompTree has been tested on MRI versions 1.8.6, 1.8.7, 1.9.1, 1.9.2,
+and jruby versions 1.4, 1.5, 1.6.
 
 == Links
 
