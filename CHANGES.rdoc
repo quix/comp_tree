@@ -1,5 +1,13 @@
 
-= CompTree ChangeLog
+= comp_tree Changes
+
+== Version 1.1.0
+
+* lazily spawn threads as needed -- no longer pre-allocates possibly
+  unused threads
+
+* no longer required to specify the number of threads (pass 0 to the
+  second argument of +compute+).
 
 == Version 1.0.1
 
