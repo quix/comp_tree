@@ -22,7 +22,7 @@ class DrainTest < CompTreeTest
   end
 
   def each_drain
-    (1..10).each { |threads|
+    (0..10).each { |threads|
       yield threads
     }
   end

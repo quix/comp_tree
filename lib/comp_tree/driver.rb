@@ -98,7 +98,8 @@ module CompTree
     #
     # _name_ -- unique node identifier (for example a symbol).
     #
-    # _num_threads_ -- number of threads.
+    # _max_threads_ -- maximum number of threads, or +0+ to indicate
+    # no limit.
     #
     # Compute the tree below _name_ and return the result.
     #
@@ -108,24 +109,24 @@ module CompTree
     # It is your responsibility to call reset() before attempting the
     # computation again, otherwise the result will be undefined.
     #
-    def compute(name, num_threads)
+    def compute(name, max_threads)
       begin
-        num_threads = num_threads.to_int
+        max_threads = max_threads.to_int
       rescue NoMethodError
-        raise TypeError, "can't convert #{num_threads.class} into Integer"
+        raise TypeError, "can't convert #{max_threads.class} into Integer"
       end
-      unless num_threads > 0
-        raise RangeError, "number of threads must be greater than zero"
+      if max_threads < 0
+        raise RangeError, "number of threads must be nonnegative"
       end
       root = @nodes.fetch(name) {
         raise NoNodeError.new(name)
       }
       if root.computed
         root.result
-      elsif num_threads == 1
+      elsif max_threads == 1
         root.compute_now
       else
-        Algorithm.compute_parallel(root, num_threads)
+        Algorithm.compute_parallel(root, max_threads)
       end
     end
   end

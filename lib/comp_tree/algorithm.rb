@@ -3,19 +3,14 @@ module CompTree
   module Algorithm
     module_function
 
-    def compute_parallel(root, num_threads)
+    def compute_parallel(root, max_threads)
       from_workers = Queue.new
       to_workers = Queue.new
+      workers = []
 
-      workers = (1..num_threads).map {
-        Thread.new {
-          worker_loop(from_workers, to_workers)
-        }
-      }
+      node = master_loop(root, max_threads, workers, from_workers, to_workers)
 
-      node = master_loop(root, num_threads, from_workers, to_workers)
-
-      num_threads.times { to_workers.push(nil) }
+      workers.size.times { to_workers.push(nil) }
       workers.each { |t| t.join }
       
       if node.computed.is_a? Exception
@@ -25,18 +20,21 @@ module CompTree
       end
     end
 
-    def worker_loop(from_workers, to_workers)
-      while node = to_workers.pop
-        node.compute
-        from_workers.push(node)
-      end
+    def new_worker(from_workers, to_workers)
+      Thread.new {
+        while node = to_workers.pop
+          node.compute
+          from_workers.push(node)
+        end
+      }
     end
 
-    def master_loop(root, num_threads, from_workers, to_workers)
+    def master_loop(root, arg1, workers, from_workers, to_workers)
+      max_threads = arg1 == 0 ? nil : arg1
       num_working = 0
       node = nil
       while true
-        if num_working == num_threads or !(node = find_node(root))
+        if num_working == max_threads or !(node = find_node(root))
           #
           # maxed out or no nodes available -- wait for results
           #
@@ -48,8 +46,12 @@ module CompTree
           end
         else
           #
-          # found a node
+          # not maxed out and found a node -- compute it
           #
+          if (!max_threads.nil? and workers.size < max_threads) or
+              (max_threads.nil? and num_working == workers.size)
+            workers << new_worker(from_workers, to_workers)
+          end
           num_working += 1
           node.lock
           to_workers.push(node)

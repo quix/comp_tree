@@ -4,7 +4,7 @@ class GrindTest < CompTreeTest
   GENERATOR_DATA = {
     :level_range => 1..5,
     :children_range => 1..5,
-    :thread_range => 1..10,
+    :thread_range => 0..10,
     :drain_iterations => 30,
   }
 

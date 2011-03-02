@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__)) + '/comp_tree_test_base'
 
 class BasicTest < CompTreeTest
   def test_define
-    (1..20).each { |threads|
+    (0..20).each { |threads|
       CompTree.build { |driver|
         driver.define(:area, :width, :height, :offset) { |width, height, offset|
           width*height - offset
@@ -33,7 +33,7 @@ class BasicTest < CompTreeTest
     [nil, false, true, 33].each { |result|
       CompTree.build { |driver|
         driver.define(:a) { result }
-        (1..3).each { |n|
+        (0..6).each { |n|
           assert_equal(result, driver.compute(:a, n))
         }
       }
@@ -41,7 +41,7 @@ class BasicTest < CompTreeTest
   end
 
   def test_threads_opt
-    (1..20).each { |threads|
+    (0..20).each { |threads|
       CompTree.build do |driver|
         driver.define(:a) { 33 }
         assert_equal(33, driver.compute(:a, threads))
@@ -89,8 +89,11 @@ class BasicTest < CompTreeTest
         7
       }
       
-      assert_raises(test_error) {
-        driver.compute(:area, 6)
+      (0..20).each { |n|
+        assert_raises(test_error) {
+          driver.compute(:area, n)
+        }
+        driver.reset(:area)
       }
     }
   end
@@ -111,7 +114,7 @@ class BasicTest < CompTreeTest
   def test_non_symbols
     width_id = Object.new
     height_id = 272727
-    (1..3).each { |threads|
+    (0..6).each { |threads|
       CompTree.build { |driver|
         driver.define("area", width_id, height_id, :offset) {
           |width, height, offset|
@@ -150,7 +153,7 @@ class BasicTest < CompTreeTest
   
   def test_result_variety
     [true, false, nil, Object.new, 33].each { |result|
-      (1..20).each { |threads|
+      (0..20).each { |threads|
         CompTree.build { |driver|
           driver.define(:area, :width, :height, :offset) {
             |width, height, offset|

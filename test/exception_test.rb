@@ -5,7 +5,7 @@ class ExceptionTest < CompTreeTest
     test_error = Class.new StandardError
     [true, false].each { |define_all|
       [true, false].each { |abort_on_exception|
-        (1..20).each { |num_threads|
+        (0..20).each { |num_threads|
           error = (
             begin
               CompTree.build { |driver|
@@ -63,7 +63,6 @@ class ExceptionTest < CompTreeTest
   def test_num_threads
     CompTree.build do |driver|
       driver.define(:root) { }
-      assert_raises(RangeError) { driver.compute(:root, 0) }
       assert_raises(RangeError) { driver.compute(:root, -1) }
       assert_raises(RangeError) { driver.compute(:root, -11) }
 
@@ -76,7 +75,7 @@ class ExceptionTest < CompTreeTest
   end
 
   def test_invalid_node
-    (1..20).each { |num_threads|
+    (0..20).each { |num_threads|
       CompTree.build do |driver|
         driver.define(:root) { }
         driver.compute(:root, num_threads)
@@ -98,7 +97,7 @@ class ExceptionTest < CompTreeTest
   end
 
   def test_missing_function
-    (1..20).each { |num_threads|
+    (0..20).each { |num_threads|
       CompTree.build { |driver|
         driver.define(:f, :x) { |x|
           x + 33

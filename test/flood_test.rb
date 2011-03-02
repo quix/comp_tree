@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__)) + '/comp_tree_test_base'
 
 class FloodTest < CompTreeTest
   def test_thread_flood
-    (1..200).each { |num_threads|
+    (0..200).each { |num_threads|
       CompTree.build { |driver|
         noop = lambda { |*args| true }
         driver.define(:a, :b, &noop)
