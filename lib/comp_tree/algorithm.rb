@@ -4,20 +4,17 @@ module CompTree
     module_function
 
     def compute_parallel(root, max_threads)
+      workers = []
       from_workers = Queue.new
       to_workers = Queue.new
-      workers = []
 
       node = master_loop(root, max_threads, workers, from_workers, to_workers)
 
       workers.size.times { to_workers.push(nil) }
       workers.each { |t| t.join }
       
-      if node.computed.is_a? Exception
-        raise node.computed
-      else
-        node.result
-      end
+      raise node.computed if node.computed.is_a? Exception
+      node.result
     end
 
     def new_worker(from_workers, to_workers)
@@ -42,7 +39,7 @@ module CompTree
           node.unlock
           num_working -= 1
           if node == root or node.computed.is_a? Exception
-            break node
+            return node
           end
         else
           #
@@ -76,9 +73,7 @@ module CompTree
         # locked or children not computed; recurse to children
         #
         node.each_child { |child|
-          if found = find_node(child)
-            return found
-          end
+          found = find_node(child) and return found
         }
         nil
       end

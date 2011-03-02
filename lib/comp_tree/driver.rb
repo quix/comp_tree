@@ -38,30 +38,24 @@ module CompTree
     #
     def define(name, *child_names, &block)
       #
-      # retrieve or create node and children
+      # retrieve or create node
       #
-
-      node = @nodes.fetch(name) {
-        @nodes[name] = @node_class.new(name)
-      }
-      if node.function
-        raise RedefinitionError.new(node.name)
-      end
+      node = @nodes[name] ||= @node_class.new(name)
+      raise RedefinitionError.new(node.name) if node.function
       node.function = block
-      
+
+      #
+      # retrieve or create children
+      #
       children = child_names.map { |child_name|
-        @nodes.fetch(child_name) {
-          @nodes[child_name] = @node_class.new(child_name)
-        }
+        @nodes[child_name] ||= @node_class.new(child_name)
       }
 
       #
       # link
       #
       node.children = children
-      children.each { |child|
-        child.parents << node
-      }
+      children.each { |child| child.parents << node }
       
       node
     end
@@ -118,9 +112,7 @@ module CompTree
       if max_threads < 0
         raise RangeError, "number of threads must be nonnegative"
       end
-      root = @nodes.fetch(name) {
-        raise NoNodeError.new(name)
-      }
+      root = @nodes[name] or raise NoNodeError.new(name)
       if root.computed
         root.result
       elsif max_threads == 1
