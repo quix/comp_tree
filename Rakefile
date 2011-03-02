@@ -1,9 +1,10 @@
 $LOAD_PATH.unshift 'devel'
 
-require 'jumpstart'
+require 'levitate'
 
-Jumpstart.new "comp_tree" do |s|
+Levitate.new "comp_tree" do |s|
   s.developers << ["James M. Lawrence", "quixoticsycophant@gmail.com"]
+  s.rubyforge_info = ["quix", "comptree"]
   s.github_user = "quix"
   s.rdoc_files = %w[
     lib/comp_tree/comp_tree.rb
