@@ -65,7 +65,7 @@ module CompTree
   #       2
   #     }
   #     
-  #     # Compute the area using four parallel threads.
+  #     # Compute the area using up to four parallel threads.
   #     puts driver.compute(:area, 4)
   #     # => 63
   # 

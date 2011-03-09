@@ -29,11 +29,11 @@ module CompTree
     # to the block.  The block returns the result of this node's
     # computation.
     #
-    # In this example, a computation node named +area+ is defined
-    # which depends on the nodes +width+ and +height+.
+    # In the following example, a computation node named +:area+ is
+    # defined which depends on the nodes named +:width+ and +:height+.
     #
-    #   driver.define(:area, :width, :height) { |width, height|
-    #     width*height
+    #   driver.define(:area, :width, :height) { |w, h|
+    #     w*h
     #   }
     #
     def define(name, *child_names, &block)
@@ -110,8 +110,9 @@ module CompTree
         raise TypeError, "can't convert #{max_threads.class} into Integer"
       end
       if max_threads < 0
-        raise RangeError, "number of threads must be nonnegative"
+        raise RangeError, "max threads must be nonnegative"
       end
+
       root = @nodes[name] or raise NoNodeError.new(name)
       if root.computed
         root.result
