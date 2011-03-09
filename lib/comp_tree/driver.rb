@@ -118,7 +118,7 @@ module CompTree
       elsif max_threads == 1
         root.compute_now
       else
-        Algorithm.compute_parallel(root, max_threads)
+        Algorithm.compute_parallel(root, max_threads == 0 ? nil : max_threads)
       end
     end
   end

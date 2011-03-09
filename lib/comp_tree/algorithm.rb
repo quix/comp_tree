@@ -13,7 +13,9 @@ module CompTree
       workers.size.times { to_workers.push(nil) }
       workers.each { |t| t.join }
       
-      raise node.computed if node.computed.is_a? Exception
+      if node.computed.is_a? Exception
+        raise node.computed
+      end
       node.result
     end
 
@@ -26,8 +28,7 @@ module CompTree
       }
     end
 
-    def master_loop(root, arg1, workers, from_workers, to_workers)
-      max_threads = arg1 == 0 ? nil : arg1
+    def master_loop(root, max_threads, workers, from_workers, to_workers)
       num_working = 0
       node = nil
       while true
