@@ -63,7 +63,7 @@ module CompTree
         # already computed
         #
         nil
-      elsif not node.locked? and node.children_results
+      elsif node.free? and node.children_results
         #
         # Node is not computed, not locked, and its children are
         # computed; ready to compute.
@@ -73,7 +73,7 @@ module CompTree
         #
         # locked or children not computed; recurse to children
         #
-        node.each_child { |child|
+        node.children.each { |child|
           found = find_node(child) and return found
         }
         nil
