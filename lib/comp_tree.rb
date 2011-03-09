@@ -74,6 +74,13 @@ module CompTree
   #     # => 63
   #   end
   #
+  # A custom <code>CompTree::Node</code> subclass may optionally be
+  # provided,
+  #
+  #   CompTree.build(:node_class => MyNode) { ... }
+  #
+  # This will build the tree with +MyNode+ instances.
+  #
   def self.build(opts = {})
     yield Driver.new(opts)
   end
