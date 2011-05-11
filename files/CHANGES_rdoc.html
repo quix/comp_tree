@@ -1,0 +1,225 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang='en'>
+  <head>
+    <title>CHANGES.rdoc</title>
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <link href='../css/style.css' media='screen' rel='stylesheet' type='text/css'>
+    <script type='text/javascript'>
+      //<![CDATA[
+        function popupCode(url) {
+          window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+        }
+        
+        function toggleCode(id) {
+          var code = document.getElementById(id)
+        
+          code.style.display = code.style.display != 'block' ? 'block' : 'none'
+          return true
+        }
+        
+        // Make codeblocks hidden by default
+        document.writeln('<' + 'style type="text/css">.method .source pre { display: none }<\/style>')
+      //]]>
+    </script>
+  </head>
+  <body class='page'>
+    <div class='file' id='wrapper'>
+      <div class='header'>
+        <div class='name'>CHANGES.rdoc</div>
+        <div class='paths'>
+          CHANGES.rdoc
+        </div>
+        <div class='last-update'>
+          Last Update:
+          <span class='datetime'>2011-05-17 22:26:23 -0400</span>
+        </div>
+      </div>
+      <div id='content'>
+        <div id='text'>
+          <div id='description'>
+            <h1>comp_tree Changes</h1>
+            <h2>Version 1.1.3</h2>
+            <ul>
+            <li><p>
+            update build tools
+            </p>
+            </li>
+            </ul>
+            <h2>Version 1.1.2</h2>
+            <ul>
+            <li><p>
+            optimizations
+            </p>
+            </li>
+            <li><p>
+            doc fixes
+            </p>
+            </li>
+            </ul>
+            <h2>Version 1.1.1</h2>
+            <ul>
+            <li><p>
+            fix documentation
+            </p>
+            </li>
+            </ul>
+            <h2>Version 1.1.0</h2>
+            <ul>
+            <li><p>
+            lazily spawn threads as needed &#8212; no longer pre-allocates possibly
+            unused threads
+            </p>
+            </li>
+            <li><p>
+            no longer required to specify the number of threads (pass 0 to the second
+            argument of <tt>compute</tt>).
+            </p>
+            </li>
+            </ul>
+            <h2>Version 1.0.1</h2>
+            <ul>
+            <li><p>
+            minor optimization to the main algorithm
+            </p>
+            </li>
+            </ul>
+            <h2>Version 1.0.0</h2>
+            <ul>
+            <li><p>
+            better errors and error handling
+            </p>
+            </li>
+            <li><p>
+            single-threaded compute() now checks exceptions
+            </p>
+            </li>
+            <li><p>
+            compute(:root, :threads => 3) option deprecated; use compute(:root, 3)
+            </p>
+            </li>
+            </ul>
+            <h2>Version 0.7.6</h2>
+            <ul>
+            <li><p>
+            Driver#define returns created node
+            </p>
+            </li>
+            <li><p>
+            Raise CompTree::ArgumentError for nonexistent node or threads < 1
+            </p>
+            </li>
+            </ul>
+            <h2>Version 0.7.5</h2>
+            <ul>
+            <li><p>
+            fix manual install
+            </p>
+            </li>
+            </ul>
+            <h2>Version 0.7.4</h2>
+            <ul>
+            <li><p>
+            fix documentation
+            </p>
+            </li>
+            </ul>
+            <h2>Version 0.7.3</h2>
+            <ul>
+            <li><p>
+            replace standard Queue class
+            </p>
+            </li>
+            </ul>
+            <h2>Version 0.7.2</h2>
+            <ul>
+            <li><p>
+            check for number of threads < 1
+            </p>
+            </li>
+            <li><p>
+            new benchmarks indicate previous algorithm was faster after all
+            </p>
+            </li>
+            </ul>
+            <h2>Version 0.7.1</h2>
+            <ul>
+            <li><p>
+            rename README to <a href="README_rdoc.html">README.rdoc</a> for github
+            display
+            </p>
+            </li>
+            <li><p>
+            internal cleanup 
+            </p>
+            </li>
+            </ul>
+            <h2>Version 0.7.0</h2>
+            <ul>
+            <li><p>
+            remove fork and discard_result options
+            </p>
+            </li>
+            <li><p>
+            remove contrib/
+            </p>
+            </li>
+            <li><p>
+            remove block arg to CompTree.new; use CompTree.build
+            </p>
+            </li>
+            <li><p>
+            remove <a href="../classes/CompTree/Error.html">CompTree::Error</a> nesting
+            </p>
+            </li>
+            <li><p>
+            Driver#compute accepts integer as second option
+            </p>
+            </li>
+            <li><p>
+            remove method_missing and eval tricks for node definitions; new project
+            &#8216;pure&#8217; makes this obsolete
+            </p>
+            </li>
+            <li><p>
+            split up tests
+            </p>
+            </li>
+            <li><p>
+            allow non-symbols for node IDs
+            </p>
+            </li>
+            <li><p>
+            check_circular now returns the loop instead of raising
+            </p>
+            </li>
+            <li><p>
+            allow computation result of nil
+            </p>
+            </li>
+            </ul>
+            <h2>Version 0.5.2</h2>
+            <ul>
+            <li><p>
+            internal project cleanup (no relevant code changes).
+            </p>
+            </li>
+            </ul>
+            <h2>Version 0.5.0</h2>
+            <ul>
+            <li><p>
+            Initial release.
+            </p>
+            </li>
+            </ul>
+          </div>
+          <div id='context'>
+          </div>
+        </div>
+      </div>
+      <div id='footer-push'></div>
+    </div>
+    <div id='footer'>
+      <a target="docwin" href="http://github.com/mislav/hanna/tree/master"><strong>Hanna</strong> RDoc template</a>
+    </div>
+  </body>
+</html>

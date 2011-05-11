@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang='en'>
+  <head>
+    <title>README.rdoc</title>
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+    <link href='../css/style.css' media='screen' rel='stylesheet' type='text/css'>
+    <script type='text/javascript'>
+      //<![CDATA[
+        function popupCode(url) {
+          window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+        }
+        
+        function toggleCode(id) {
+          var code = document.getElementById(id)
+        
+          code.style.display = code.style.display != 'block' ? 'block' : 'none'
+          return true
+        }
+        
+        // Make codeblocks hidden by default
+        document.writeln('<' + 'style type="text/css">.method .source pre { display: none }<\/style>')
+      //]]>
+    </script>
+  </head>
+  <body class='page'>
+    <div class='file' id='wrapper'>
+      <div class='header'>
+        <div class='name'>README.rdoc</div>
+        <div class='paths'>
+          README.rdoc
+        </div>
+        <div class='last-update'>
+          Last Update:
+          <span class='datetime'>2011-05-17 22:26:23 -0400</span>
+        </div>
+      </div>
+      <div id='content'>
+        <div id='text'>
+          <div id='description'>
+            <h1><a href="../classes/CompTree.html">CompTree</a></h1>
+            <h2>Summary</h2>
+            <p>
+            A simple framework for automatic parallelism.
+            </p>
+            <h2>Synopsis</h2>
+            <pre>require 'comp_tree'&#x000A;&#x000A;CompTree.build do |driver|&#x000A;&#x000A;  # Define a function named 'area' taking these two arguments.&#x000A;  driver.define(:area, :width, :height) { |width, height|&#x000A;    width*height&#x000A;  }&#x000A;  &#x000A;  # Define a function 'width' which takes a 'border' argument.&#x000A;  driver.define(:width, :border) { |border|&#x000A;    7 + border&#x000A;  }&#x000A;  &#x000A;  # Ditto for 'height'.&#x000A;  driver.define(:height, :border) { |border|&#x000A;    5 + border&#x000A;  }&#x000A;  &#x000A;  # Define a constant function 'border'.&#x000A;  driver.define(:border) {&#x000A;    2&#x000A;  }&#x000A;  &#x000A;  # Compute the area using up to four parallel threads.&#x000A;  puts driver.compute(:area, 4)&#x000A;  # =&gt; 63&#x000A;&#x000A;  # We've done this computation.&#x000A;  puts((7 + 2)*(5 + 2))&#x000A;  # =&gt; 63&#x000A;end</pre>
+            <h2>Install</h2>
+            <pre>% gem install comp_tree</pre>
+            <p>
+            Or from inside an unpacked .tgz download, <tt>rake install</tt> / <tt>rake
+            uninstall</tt>.
+            </p>
+            <h2>Description</h2>
+            <p>
+            <a href="../classes/CompTree.html">CompTree</a> is a parallel computation
+            tree structure based upon concepts from pure functional programming.
+            </p>
+            <p>
+            <a href="../classes/CompTree.html">CompTree</a> has been tested on MRI
+            versions 1.8.6, 1.8.7, 1.9.1, 1.9.2, and jruby versions 1.4, 1.5, 1.6.
+            </p>
+            <h2>Links</h2>
+            <ul>
+            <li><p>
+            Home: <a
+            href="http://quix.github.com/comp_tree">quix.github.com/comp_tree</a>
+            </p>
+            </li>
+            <li><p>
+            Feature Requests, Bug Reports: <a
+            href="http://github.com/quix/comp_tree/issues">github.com/quix/comp_tree/issues</a>
+            </p>
+            </li>
+            <li><p>
+            Manual Download: <a
+            href="http://github.com/quix/comp_tree/archives/master">github.com/quix/comp_tree/archives/master</a>
+            </p>
+            </li>
+            <li><p>
+            Repository: <a
+            href="http://github.com/quix/comp_tree">github.com/quix/comp_tree</a>
+            </p>
+            </li>
+            </ul>
+            <h2>Background</h2>
+            <p>
+            The user should have a basic understanding of functional programming (see
+            for example <a
+            href="http://en.wikipedia.org/wiki/Functional_programming">en.wikipedia.org/wiki/Functional_programming</a>)
+            and the meaning of <em>side effects</em>.
+            </p>
+            <p>
+            Every function you define must explicitly depend on the data it uses.
+            </p>
+            <pre>#&#x000A;# BAD example: depending on state -- offset not listed as a parameter&#x000A;#&#x000A;driver.define(:area, :width, :height) { |width, height|&#x000A;  width*height - offset&#x000A;}</pre>
+            <p>
+            Unless <em>offset</em> is really a constant, the result of
+            <tt>driver.compute(:area, n)</tt> is not well-defined for <em>n</em> > 1.
+            </p>
+            <p>
+            Just as depending on some changeable state is bad, it is likewise bad to
+            affect a state (to produce a <em>side effect</em>).
+            </p>
+            <pre>#&#x000A;# BAD example: affecting state&#x000A;#&#x000A;driver.define(:area, :width, :height) { |width, height|&#x000A;  accumulator.add &quot;more data&quot;&#x000A;  width*height&#x000A;}</pre>
+            <p>
+            Given a tree where nodes are modifying <em>accumulator</em>, the end state
+            of <em>accumulator</em> is not well-defined, even if <em>accumulator</em>
+            is a thread-safe object.
+            </p>
+            <p>
+            Note however it is OK affect a state as long as <em>no other function
+            depends on that state</em>.  This is the principle under which <a
+            href="../classes/CompTree.html">CompTree</a> parallelizes Rake tasks (<a
+            href="http://drake.rubyforge.org">drake.rubyforge.org</a>).
+            </p>
+            <h2>Author</h2>
+            <ul>
+            <li><p>
+            James M. Lawrence <quixoticsycophant@gmail.com>
+            </p>
+            </li>
+            </ul>
+            <h2>License</h2>
+            <pre>Copyright (c) 2008-2011 James M. Lawrence.  All rights reserved.&#x000A;&#x000A;Permission is hereby granted, free of charge, to any person&#x000A;obtaining a copy of this software and associated documentation files&#x000A;(the &quot;Software&quot;), to deal in the Software without restriction,&#x000A;including without limitation the rights to use, copy, modify, merge,&#x000A;publish, distribute, sublicense, and/or sell copies of the Software,&#x000A;and to permit persons to whom the Software is furnished to do so,&#x000A;subject to the following conditions:&#x000A;&#x000A;The above copyright notice and this permission notice shall be&#x000A;included in all copies or substantial portions of the Software.&#x000A;&#x000A;THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND,&#x000A;EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF&#x000A;MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND&#x000A;NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS&#x000A;BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN&#x000A;ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN&#x000A;CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE&#x000A;SOFTWARE.</pre>
+          </div>
+          <div id='context'>
+          </div>
+        </div>
+      </div>
+      <div id='footer-push'></div>
+    </div>
+    <div id='footer'>
+      <a target="docwin" href="http://github.com/mislav/hanna/tree/master"><strong>Hanna</strong> RDoc template</a>
+    </div>
+  </body>
+</html>
