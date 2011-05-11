@@ -1,6 +1,10 @@
 
 = comp_tree Changes
 
+== Version 1.1.3
+
+* update build tools
+
 == Version 1.1.2
 
 * optimizations
