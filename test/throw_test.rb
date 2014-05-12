@@ -4,7 +4,7 @@ class ThrowTest < CompTreeTest
   EXPECTED = RUBY_VERSION >= "1.9.0" ? ArgumentError : ThreadError
 
   def test_throw
-    assert_equal 1, Thread.list.size
+    init_size = Thread.list.size
     exception = assert_raises(EXPECTED) {
       CompTree.build do |driver|
         driver.define(:root, :a) {
@@ -17,6 +17,6 @@ class ThrowTest < CompTreeTest
       end
     }
     assert_match "uncaught", exception.message
-    assert_equal 1, Thread.list.size
+    assert_equal init_size, Thread.list.size
   end
 end

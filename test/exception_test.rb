@@ -47,9 +47,9 @@ class ExceptionTest < CompTreeTest
           )
     
           if define_all
-            assert_block { error.is_a? test_error }
+            assert ( error.is_a? test_error )
           else
-            assert_block { error.is_a? CompTree::NoFunctionError }
+            assert ( error.is_a? CompTree::NoFunctionError )
             assert_equal(
               "no function was defined for node `:border'",
               error.message

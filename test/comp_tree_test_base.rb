@@ -1,6 +1,7 @@
 $LOAD_PATH.unshift File.dirname(__FILE__) + '/../lib'
 $LOAD_PATH.unshift File.dirname(__FILE__) + '/../devel'
 
+gem 'minitest'
 require 'minitest/unit'
 require 'minitest/autorun' unless defined? Rake
 require 'comp_tree'
