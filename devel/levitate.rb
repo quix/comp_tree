@@ -338,7 +338,13 @@ class Levitate
         test_files.each { |file| require file }
 
         # if we use at_exit hook instead, it won't run before :release
-        MiniTest::Unit.new.run ARGV
+        if MiniTest::Unit.method_defined? :run
+          # minitest 4
+          MiniTest::Unit.new.run ARGV
+        else
+          # minitest 5
+          Minitest.run ARGV
+        end
       end
       
       desc "run tests with coverage"
